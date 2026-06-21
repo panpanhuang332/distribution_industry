@@ -1,0 +1,2748 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>流通業管理：從傳統通路到 AI 時代的新零售｜互動式教案</title>
+<!--
+  =========================================================================
+  流通業管理 互動式教案網頁  (單一檔案版)
+  作者署名：黄國津 課程設計
+  使用方式：存成 index.html，用瀏覽器直接開啟即可。
+  結構說明：
+    1. <style>  ── 全部 CSS 樣式（含 print-friendly 與 RWD）
+    2. <body>   ── 版面骨架（Hero / 導覽 / 時間軸 / 章節 / 詞彙 / 比較表 / 總複習 / 教師建議）
+    3. <script> ── courseData 物件（0 導覽頁 + 14 章完整資料）＋ 互動引擎
+  修改提示：所有課程內容都集中在 <script> 的 courseData / glossaryData / compareData，
+            想改內容只要改這三個資料物件即可，版面與互動程式不需動。
+  =========================================================================
+-->
+<style>
+/* ============ 設計 Token：深藍 / 白 / 淺灰 + 橘綠強調 ============ */
+:root{
+  --navy-900:#0f2740;   /* 最深藍：頁首、標題 */
+  --navy-700:#16385a;   /* 主深藍 */
+  --navy-500:#1f4e79;   /* 中藍：連結、卡片標題 */
+  --navy-300:#5b7ea3;   /* 淺藍：次要文字 */
+  --paper:#ffffff;      /* 白 */
+  --surface:#f4f6f9;    /* 淺灰底 */
+  --surface-2:#e9eef4;  /* 稍深淺灰 */
+  --line:#d6dee8;       /* 邊框線 */
+  --ink:#1c2733;        /* 主文字 */
+  --ink-soft:#5a6b7a;   /* 次文字 */
+  --orange:#e07b2a;     /* 橘強調：Lab、行動 */
+  --orange-bg:#fdf1e6;
+  --green:#2e9e6b;      /* 綠強調：完成、正確 */
+  --green-bg:#e7f5ee;
+  --red:#c0473b;        /* 錯誤 */
+  --red-bg:#fbeae8;
+  --radius:14px;
+  --radius-sm:9px;
+  --shadow:0 1px 2px rgba(15,39,64,.06),0 6px 20px rgba(15,39,64,.07);
+  --shadow-sm:0 1px 3px rgba(15,39,64,.08);
+  --font:"PingFang TC","Microsoft JhengHei","Noto Sans TC","Heiti TC",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --maxw:1140px;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;font-family:var(--font);color:var(--ink);background:var(--surface);
+  line-height:1.75;font-size:16.5px;-webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{line-height:1.35;color:var(--navy-900);font-weight:800;letter-spacing:.01em;}
+a{color:var(--navy-500);}
+p{margin:.55em 0;}
+img{max-width:100%;}
+
+/* ============ 頂部固定導覽列 ============ */
+.topbar{
+  position:sticky;top:0;z-index:50;background:rgba(15,39,64,.97);
+  backdrop-filter:saturate(140%) blur(6px);color:#fff;
+  border-bottom:3px solid var(--orange);
+}
+.topbar .wrap{max-width:var(--maxw);margin:0 auto;display:flex;align-items:center;
+  gap:18px;padding:11px 20px;}
+.topbar .brand{font-weight:800;font-size:1.02rem;letter-spacing:.02em;white-space:nowrap;}
+.topbar .brand small{display:block;font-weight:500;font-size:.7rem;color:#9fc0de;letter-spacing:.06em;}
+.topbar nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap;}
+.topbar nav a{color:#cfe0f0;text-decoration:none;font-size:.86rem;padding:6px 11px;
+  border-radius:8px;transition:.15s;white-space:nowrap;}
+.topbar nav a:hover{background:rgba(255,255,255,.12);color:#fff;}
+.menu-toggle{display:none;margin-left:auto;background:none;border:1px solid #ffffff44;
+  color:#fff;border-radius:8px;padding:7px 12px;font-size:1rem;cursor:pointer;}
+
+/* ============ Hero ============ */
+.hero{
+  background:
+    radial-gradient(1100px 380px at 82% -8%,rgba(224,123,42,.20),transparent 60%),
+    radial-gradient(900px 420px at 8% 110%,rgba(46,158,107,.16),transparent 60%),
+    linear-gradient(160deg,var(--navy-900),var(--navy-700) 60%,#1c4a73);
+  color:#eaf1f8;padding:60px 20px 54px;
+}
+.hero .wrap{max-width:var(--maxw);margin:0 auto;}
+.hero .eyebrow{display:inline-block;font-size:.8rem;letter-spacing:.22em;font-weight:700;
+  color:#ffd4ad;border:1px solid #ffffff33;padding:5px 14px;border-radius:30px;margin-bottom:18px;}
+.hero h1{color:#fff;font-size:clamp(1.9rem,4.6vw,3.1rem);margin:.1em 0 .15em;line-height:1.22;}
+.hero .sub{font-size:clamp(1rem,2.2vw,1.28rem);color:#bcd2e8;font-weight:500;max-width:760px;}
+.hero .lead{max-width:740px;color:#d3e1f0;margin-top:14px;}
+.hero-actions{margin-top:26px;display:flex;gap:13px;flex-wrap:wrap;align-items:center;}
+.btn{cursor:pointer;border:none;font-family:inherit;font-weight:700;border-radius:11px;
+  padding:13px 24px;font-size:1rem;text-decoration:none;display:inline-flex;align-items:center;
+  gap:9px;transition:.18s;}
+.btn-primary{background:var(--orange);color:#fff;box-shadow:0 6px 18px rgba(224,123,42,.4);}
+.btn-primary:hover{transform:translateY(-2px);background:#ec8836;}
+.btn-ghost{background:rgba(255,255,255,.1);color:#fff;border:1px solid #ffffff3a;}
+.btn-ghost:hover{background:rgba(255,255,255,.2);}
+.hero-stats{display:flex;gap:30px;flex-wrap:wrap;margin-top:34px;}
+.hero-stats div{border-left:3px solid var(--orange);padding-left:13px;}
+.hero-stats b{display:block;font-size:1.7rem;color:#fff;line-height:1.1;}
+.hero-stats span{font-size:.82rem;color:#a9c4dd;}
+
+/* ============ 區段通用 ============ */
+section{padding:46px 20px;}
+.wrap{max-width:var(--maxw);margin:0 auto;}
+.section-head{margin-bottom:26px;}
+.section-head .kicker{font-size:.78rem;letter-spacing:.2em;font-weight:800;color:var(--orange);
+  text-transform:uppercase;}
+.section-head h2{font-size:clamp(1.45rem,3vw,2rem);margin:.18em 0 .1em;}
+.section-head p{color:var(--ink-soft);max-width:760px;margin:0;}
+.bg-white{background:var(--paper);}
+.bg-surface{background:var(--surface);}
+
+/* ============ 搜尋列 ============ */
+.searchbar{max-width:var(--maxw);margin:-26px auto 0;padding:0 20px;position:relative;z-index:5;}
+.searchbar .box{background:#fff;border:1px solid var(--line);border-radius:14px;
+  box-shadow:var(--shadow);padding:10px 14px;display:flex;align-items:center;gap:10px;}
+.searchbar input{flex:1;border:none;outline:none;font-size:1rem;font-family:inherit;
+  background:transparent;color:var(--ink);padding:6px 2px;}
+.searchbar .ico{font-size:1.15rem;}
+.searchbar .hint{font-size:.78rem;color:var(--ink-soft);white-space:nowrap;}
+#searchResults{margin-top:10px;background:#fff;border:1px solid var(--line);border-radius:12px;
+  box-shadow:var(--shadow);overflow:hidden;display:none;}
+#searchResults .item{padding:11px 16px;border-bottom:1px solid var(--surface-2);cursor:pointer;}
+#searchResults .item:last-child{border-bottom:none;}
+#searchResults .item:hover{background:var(--surface);}
+#searchResults .item b{color:var(--navy-700);}
+#searchResults .item small{color:var(--ink-soft);display:block;font-size:.8rem;}
+#searchResults mark{background:#ffe6b8;padding:0 2px;border-radius:3px;}
+
+/* ============ 時間軸 ============ */
+.timeline{display:flex;gap:0;overflow-x:auto;padding:10px 4px 18px;scroll-snap-type:x proximity;}
+.tl-item{flex:0 0 auto;width:128px;text-align:center;position:relative;scroll-snap-align:center;cursor:pointer;}
+.tl-item::before{content:"";position:absolute;top:22px;left:50%;width:100%;height:3px;
+  background:var(--line);z-index:0;}
+.tl-item:last-child::before{display:none;}
+.tl-dot{position:relative;z-index:1;width:46px;height:46px;margin:0 auto;border-radius:50%;
+  background:#fff;border:3px solid var(--navy-300);color:var(--navy-700);font-weight:800;
+  display:flex;align-items:center;justify-content:center;font-size:1.05rem;transition:.18s;}
+.tl-item:hover .tl-dot{border-color:var(--orange);color:var(--orange);transform:scale(1.08);}
+.tl-item.done .tl-dot{background:var(--green);border-color:var(--green);color:#fff;}
+.tl-label{font-size:.76rem;color:var(--ink-soft);margin-top:8px;padding:0 4px;line-height:1.3;}
+
+/* ============ 章節卡片導覽 ============ */
+.chapter-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:16px;}
+.ch-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:18px 18px 16px;
+  box-shadow:var(--shadow-sm);cursor:pointer;transition:.16s;position:relative;overflow:hidden;}
+.ch-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--navy-300);}
+.ch-card .num{font-size:2.1rem;font-weight:800;color:var(--surface-2);position:absolute;
+  top:6px;right:14px;line-height:1;}
+.ch-card .tag{font-size:.7rem;font-weight:800;letter-spacing:.14em;color:var(--orange);}
+.ch-card h3{font-size:1.06rem;margin:.3em 0 .35em;position:relative;z-index:1;padding-right:36px;}
+.ch-card p{font-size:.85rem;color:var(--ink-soft);margin:0;}
+.ch-card .status{margin-top:12px;font-size:.76rem;font-weight:700;color:var(--navy-300);
+  display:flex;align-items:center;gap:6px;}
+.ch-card.done{border-color:var(--green);}
+.ch-card.done .status{color:var(--green);}
+.ch-card.done::after{content:"✓ 已完成";position:absolute;top:0;left:0;background:var(--green);
+  color:#fff;font-size:.68rem;font-weight:700;padding:3px 11px;border-bottom-right-radius:10px;}
+.ch-card-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;
+  margin-top:14px;padding-top:10px;border-top:1px solid var(--surface-2);position:relative;z-index:1;}
+.ch-foot-spacer{flex:1;}
+.ch-done-flag{font-size:.74rem;font-weight:700;color:var(--green);}
+.ch-go{font-size:.82rem;font-weight:700;color:var(--orange);white-space:nowrap;}
+.ch-card:hover .ch-go{text-decoration:underline;}
+
+/* ============ 章節內容面板 ============ */
+#chapterPanel{margin:0 0 26px;display:none;scroll-margin-top:74px;}
+.grid-label{display:flex;align-items:center;gap:12px;margin:6px 0 16px;
+  font-size:.86rem;font-weight:700;color:var(--navy-300);}
+.grid-label::before,.grid-label::after{content:"";flex:1;height:1px;background:var(--line);}
+.panel-head{background:linear-gradient(135deg,var(--navy-900),var(--navy-700));color:#fff;
+  border-radius:var(--radius) var(--radius) 0 0;padding:24px 26px;}
+.panel-head .pk{font-size:.76rem;letter-spacing:.2em;font-weight:800;color:#ffce9c;}
+.panel-head h2{color:#fff;font-size:clamp(1.3rem,3vw,1.85rem);margin:.2em 0;}
+.panel-head .oneline{color:#bcd2e8;font-style:italic;border-left:3px solid var(--orange);
+  padding-left:12px;margin-top:10px;}
+.panel-body{background:#fff;border:1px solid var(--line);border-top:none;
+  border-radius:0 0 var(--radius) var(--radius);padding:22px 26px 28px;}
+
+/* 學習目標 + 時間配置 */
+.objectives{background:var(--surface);border-radius:var(--radius-sm);padding:16px 20px;margin-bottom:20px;}
+.objectives h4{margin:0 0 8px;font-size:.96rem;color:var(--navy-700);}
+.objectives ul{margin:0;padding-left:20px;}
+.objectives li{margin:4px 0;}
+.schedule{display:grid;gap:8px;margin-bottom:22px;}
+.sch-row{display:grid;grid-template-columns:120px 1fr;gap:14px;background:var(--surface);
+  border-left:4px solid var(--navy-500);border-radius:8px;padding:9px 14px;align-items:start;}
+.sch-row .t{font-weight:800;color:var(--navy-700);font-size:.86rem;}
+.sch-row .d{font-size:.92rem;}
+.sch-row:nth-child(4){border-left-color:var(--orange);}  /* Lab 段落醒目 */
+
+/* Tabs */
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:2px solid var(--surface-2);margin-bottom:18px;}
+.tab-btn{background:none;border:none;font-family:inherit;font-size:.94rem;font-weight:700;
+  color:var(--ink-soft);padding:10px 16px;cursor:pointer;border-bottom:3px solid transparent;
+  margin-bottom:-2px;transition:.15s;}
+.tab-btn:hover{color:var(--navy-700);}
+.tab-btn.active{color:var(--navy-900);border-bottom-color:var(--orange);}
+.tab-pane{display:none;animation:fade .25s ease;}
+.tab-pane.active{display:block;}
+@keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+.content-block h4{font-size:1.05rem;margin:1.1em 0 .4em;color:var(--navy-700);
+  border-left:4px solid var(--orange);padding-left:10px;}
+.content-block p{margin:.5em 0;}
+.content-block ul{padding-left:22px;}
+.content-block li{margin:5px 0;}
+.callout{background:var(--orange-bg);border:1px solid #f3d3b3;border-radius:10px;
+  padding:12px 16px;margin:14px 0;font-size:.93rem;}
+.callout.green{background:var(--green-bg);border-color:#bfe3cf;}
+.callout.blue{background:#eaf2fa;border-color:#c6dcf0;}
+.note-defer{font-size:.82rem;color:var(--orange);font-weight:600;background:#fff6ec;
+  border:1px dashed var(--orange);border-radius:8px;padding:8px 12px;display:inline-block;margin:8px 0;}
+
+/* 案例表格 */
+.tblwrap{overflow-x:auto;margin:14px 0;}
+table.data{width:100%;border-collapse:collapse;font-size:.88rem;min-width:520px;}
+table.data th,table.data td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top;}
+table.data th{background:var(--navy-700);color:#fff;font-weight:700;}
+table.data tr:nth-child(even) td{background:var(--surface);}
+table.data td:first-child{font-weight:700;color:var(--navy-700);white-space:nowrap;}
+
+/* 討論題 */
+.discuss-list{counter-reset:d;list-style:none;padding:0;}
+.discuss-list li{counter-increment:d;position:relative;padding:10px 12px 10px 44px;
+  background:var(--surface);border-radius:9px;margin:8px 0;}
+.discuss-list li::before{content:"Q"counter(d);position:absolute;left:12px;top:10px;
+  font-weight:800;color:var(--orange);font-size:.82rem;}
+
+/* Lab 區塊 */
+.lab{background:linear-gradient(180deg,#fff6ec,#fff);border:2px solid var(--orange);
+  border-radius:var(--radius);padding:20px 22px;margin-top:6px;}
+.lab .lab-tag{display:inline-flex;align-items:center;gap:7px;background:var(--orange);color:#fff;
+  font-weight:800;font-size:.84rem;padding:5px 14px;border-radius:30px;letter-spacing:.04em;}
+.lab h3{margin:12px 0 4px;font-size:1.2rem;}
+.lab .goal{font-size:.95rem;color:var(--ink);margin-bottom:14px;}
+.lab .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0;}
+.lab .meta .m{background:#fff;border:1px solid #f0d8bd;border-radius:10px;padding:11px 14px;}
+.lab .meta .m b{display:block;font-size:.78rem;color:var(--orange);letter-spacing:.08em;margin-bottom:3px;}
+.lab .meta .m span{font-size:.9rem;}
+.steps{counter-reset:s;list-style:none;padding:0;margin:8px 0;}
+.steps li{counter-increment:s;display:flex;gap:12px;align-items:flex-start;background:#fff;
+  border:1px solid #f0d8bd;border-radius:10px;padding:11px 14px;margin:8px 0;cursor:pointer;
+  transition:.14s;}
+.steps li:hover{border-color:var(--orange);}
+.steps li .chk{flex:0 0 26px;height:26px;border-radius:7px;border:2px solid var(--orange);
+  display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;
+  background:#fff;transition:.14s;}
+.steps li.checked{background:var(--green-bg);border-color:var(--green);}
+.steps li.checked .chk{background:var(--green);border-color:var(--green);}
+.steps li.checked .stx{text-decoration:line-through;color:var(--ink-soft);}
+.steps li .snum{font-weight:800;color:var(--orange);flex:0 0 auto;}
+.lab-progress{font-size:.84rem;font-weight:700;color:var(--navy-700);margin:6px 0 2px;}
+.rubric{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:6px;}
+.rubric th,.rubric td{border:1px solid #f0d8bd;padding:8px 11px;text-align:left;}
+.rubric th{background:#fbe7d2;color:var(--navy-900);}
+
+/* 小測驗 */
+.quiz .q{background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:16px 18px;margin:12px 0;}
+.quiz .q .qt{font-weight:700;margin-bottom:10px;}
+.quiz .q .qt .qn{color:var(--orange);font-weight:800;margin-right:6px;}
+.quiz .opt{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);
+  border-radius:9px;padding:10px 14px;margin:6px 0;font-family:inherit;font-size:.94rem;cursor:pointer;
+  transition:.13s;color:var(--ink);}
+.quiz .opt:hover{border-color:var(--navy-300);background:var(--surface);}
+.quiz .opt.correct{background:var(--green-bg);border-color:var(--green);color:#1d6b46;font-weight:700;}
+.quiz .opt.wrong{background:var(--red-bg);border-color:var(--red);color:#9a342b;}
+.quiz .opt.disabled{pointer-events:none;opacity:.85;}
+.quiz .explain{margin-top:9px;font-size:.88rem;padding:10px 14px;border-radius:9px;display:none;}
+.quiz .explain.show{display:block;}
+.quiz .explain.ok{background:var(--green-bg);color:#1d6b46;}
+.quiz .explain.no{background:var(--red-bg);color:#9a342b;}
+
+/* 教師提醒 */
+.teacher-note{background:#eaf2fa;border:1px solid #c6dcf0;border-left:5px solid var(--navy-500);
+  border-radius:10px;padding:16px 18px;}
+.teacher-note h4{margin:0 0 6px;color:var(--navy-700);}
+
+/* 章節底部導覽 */
+.panel-nav{display:flex;justify-content:space-between;gap:12px;margin-top:24px;flex-wrap:wrap;}
+.panel-nav button{flex:1;min-width:150px;}
+.btn-nav{background:var(--surface);border:1px solid var(--line);color:var(--navy-700);
+  border-radius:11px;padding:12px 18px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s;}
+.btn-nav:hover{background:var(--surface-2);}
+.btn-done{background:var(--green);color:#fff;border:none;border-radius:11px;padding:12px 18px;
+  font-weight:800;cursor:pointer;font-family:inherit;transition:.15s;}
+.btn-done:hover{filter:brightness(1.05);}
+.btn-done.is-done{background:var(--navy-300);}
+
+/* ============ 詞彙表 ============ */
+.glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:14px;}
+.gloss{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px 17px;box-shadow:var(--shadow-sm);}
+.gloss .term{font-weight:800;color:var(--navy-700);font-size:1.02rem;}
+.gloss .en{font-size:.78rem;color:var(--orange);font-weight:700;letter-spacing:.04em;}
+.gloss p{font-size:.88rem;color:var(--ink-soft);margin:6px 0 0;}
+
+/* ============ 比較表 ============ */
+.compare-wrap{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow-sm);}
+table.compare{width:100%;border-collapse:collapse;font-size:.86rem;min-width:860px;}
+table.compare th,table.compare td{border:1px solid var(--line);padding:11px 13px;text-align:left;vertical-align:top;}
+table.compare thead th{background:var(--navy-700);color:#fff;position:sticky;top:0;}
+table.compare tbody th{background:var(--surface);color:var(--navy-700);text-align:left;white-space:nowrap;}
+table.compare tr:nth-child(even) td{background:#fafbfd;}
+
+/* ============ 總複習 ============ */
+.review-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;}
+.rev-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow-sm);}
+.rev-card .n{font-weight:800;color:var(--orange);font-size:.8rem;letter-spacing:.1em;}
+.rev-card h4{margin:.2em 0 .3em;font-size:1rem;}
+.rev-card p{font-size:.86rem;color:var(--ink-soft);margin:0;}
+.proj-list{padding-left:22px;}
+.proj-list li{margin:7px 0;}
+
+/* ============ 教師建議 ============ */
+.teacher-guide{background:linear-gradient(135deg,var(--navy-900),var(--navy-700));color:#dbe7f3;
+  border-radius:var(--radius);padding:30px 30px;}
+.teacher-guide h2{color:#fff;}
+.teacher-guide h4{color:#ffce9c;margin:18px 0 6px;}
+.teacher-guide p,.teacher-guide li{color:#cdddec;}
+.teacher-guide a{color:#ffd4ad;}
+
+/* ============ 進度條（全域） ============ */
+.global-progress{max-width:var(--maxw);margin:0 auto 8px;padding:0 20px;}
+.gp-bar{height:10px;background:var(--surface-2);border-radius:30px;overflow:hidden;}
+.gp-fill{height:100%;width:0;background:linear-gradient(90deg,var(--green),#3fb37e);transition:width .4s;}
+.gp-text{font-size:.82rem;color:var(--ink-soft);margin:6px 0 0;display:flex;justify-content:space-between;}
+.btn-reset{background:none;border:1px solid var(--line);color:var(--ink-soft);border-radius:8px;
+  padding:3px 10px;font-size:.76rem;cursor:pointer;font-family:inherit;}
+.btn-reset:hover{border-color:var(--red);color:var(--red);}
+
+/* ============ 頁尾 ============ */
+footer{background:var(--navy-900);color:#9fb6cc;padding:30px 20px;text-align:center;font-size:.86rem;}
+footer b{color:#fff;}
+
+/* ============ RWD ============ */
+@media(max-width:760px){
+  .topbar nav{display:none;position:absolute;top:100%;left:0;right:0;background:var(--navy-900);
+    flex-direction:column;padding:8px;gap:2px;}
+  .topbar nav.open{display:flex;}
+  .menu-toggle{display:block;}
+  .topbar .brand{font-size:.92rem;}
+  .sch-row{grid-template-columns:1fr;}
+  .panel-body,.panel-head{padding-left:18px;padding-right:18px;}
+  section{padding:34px 16px;}
+}
+
+/* ============ 列印友善 ============ */
+@media print{
+  .topbar,.searchbar,.hero-actions,.menu-toggle,.btn-reset,.global-progress,
+  .timeline,.tabs,.panel-nav,#searchResults,.tl-item{display:none !important;}
+  body{background:#fff;font-size:11.5pt;}
+  .hero{background:#fff;color:#000;padding:10px 0;}
+  .hero h1,.hero .sub,.hero .lead{color:#000;}
+  .hero-stats{display:none;}
+  section{padding:14px 0;page-break-inside:avoid;}
+  .tab-pane{display:block !important;border-top:1px dashed #ccc;margin-top:10px;padding-top:6px;}
+  .tab-pane::before{content:attr(data-label);font-weight:800;color:#16385a;display:block;}
+  #chapterPanel{display:block !important;}
+  .panel-head{background:#16385a !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .lab,.teacher-note,.callout,table.data th,table.compare thead th{
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .ch-card{page-break-inside:avoid;}
+  a[href]::after{content:"";}
+}
+.print-only{display:none;}
+@media print{.print-only{display:block;}}
+/* ============ 章節面板（引擎渲染）============ */
+.panel-head-meta{display:flex;gap:8px;align-items:center;margin-bottom:10px;}
+.panel-head-meta .ch-badge{background:rgba(255,255,255,.16);color:#fff;}
+.panel-head-meta .ch-tag{color:#ffce9c;}
+.panel-title{color:#fff;font-size:clamp(1.3rem,3vw,1.85rem);margin:.1em 0 .15em;}
+.panel-oneline{color:#bcd2e8;font-style:italic;border-left:3px solid var(--orange);
+  padding-left:12px;margin:10px 0 0;line-height:1.7;}
+.obj-box{background:rgba(255,255,255,.08);border-radius:var(--radius-sm);padding:14px 18px;margin-top:16px;}
+.obj-box h4{margin:0 0 8px;font-size:.92rem;color:#ffce9c;}
+.obj-box ul{margin:0;padding-left:20px;}
+.obj-box li{margin:4px 0;color:#dce8f4;font-size:.9rem;}
+.sched{margin-top:14px;color:#dce8f4;}
+.sched>summary{cursor:pointer;font-weight:700;font-size:.9rem;color:#ffce9c;
+  padding:8px 0;list-style:none;}
+.sched>summary::-webkit-details-marker{display:none;}
+.sched>summary::before{content:"▸ ";}
+.sched[open]>summary::before{content:"▾ ";}
+.sched-table{width:100%;border-collapse:collapse;margin-top:6px;background:rgba(255,255,255,.05);
+  border-radius:var(--radius-sm);overflow:hidden;}
+.sched-table th{text-align:left;white-space:nowrap;vertical-align:top;padding:8px 12px;
+  color:#ffce9c;font-size:.82rem;width:120px;border-bottom:1px solid rgba(255,255,255,.1);}
+.sched-table td{padding:8px 12px;color:#dce8f4;font-size:.85rem;border-bottom:1px solid rgba(255,255,255,.1);}
+
+/* 分頁列 */
+.tab-bar{display:flex;flex-wrap:wrap;gap:4px;background:var(--surface);
+  border:1px solid var(--line);border-top:none;padding:10px 14px 0;}
+.tab-btn{border:none;background:transparent;cursor:pointer;font-family:inherit;
+  font-size:.92rem;font-weight:700;color:var(--ink-soft);padding:10px 16px;
+  border-radius:var(--radius-sm) var(--radius-sm) 0 0;border-bottom:3px solid transparent;transition:.14s;}
+.tab-btn:hover{color:var(--navy-700);background:var(--surface-2);}
+.tab-btn.active{color:var(--navy-700);background:#fff;border-bottom-color:var(--orange);box-shadow:var(--shadow-sm);}
+
+/* 分頁內容 */
+.tab-body{background:#fff;border:1px solid var(--line);border-top:none;
+  padding:24px 28px;}
+.rich{line-height:1.85;color:var(--ink);margin-bottom:14px;}
+.rich:last-child{margin-bottom:0;}
+.rich h3{font-size:1.1rem;color:var(--navy-700);margin:0 0 12px;}
+.rich h4{font-size:1rem;color:var(--navy-700);margin:20px 0 8px;
+  padding-left:11px;border-left:4px solid var(--orange);}
+.rich h4:first-child{margin-top:0;}
+.rich p{margin:0 0 12px;}
+.rich ul{margin:0 0 12px;padding-left:22px;}
+.rich li{margin:6px 0;}
+.rich b{color:var(--navy-700);}
+.case-h{display:inline-block;background:var(--navy-700);color:#fff !important;
+  font-size:.92rem !important;padding:5px 14px;border-radius:20px;border:none !important;margin:0 0 12px !important;}
+.callout{background:var(--orange-bg);border-left:4px solid var(--orange);
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:12px 16px;margin:14px 0;
+  font-size:.9rem;color:#7a4516;}
+.discuss-box{background:var(--surface);border-radius:var(--radius-sm);padding:16px 20px;margin-top:18px;}
+.discuss-box h4{margin:0 0 8px;color:var(--navy-700);font-size:.98rem;}
+.discuss-box ol{margin:0;padding-left:22px;}
+.discuss-box li{margin:7px 0;line-height:1.7;}
+
+/* Lab */
+.lab-wrap{}
+.lab-banner{display:flex;gap:14px;align-items:flex-start;background:var(--orange-bg);
+  border:1px solid #f3d9bf;border-radius:var(--radius-sm);padding:16px 18px;margin-bottom:18px;}
+.lab-icon{font-size:1.6rem;line-height:1;}
+.lab-banner h3{margin:0 0 4px;color:#a85a16;font-size:1.08rem;}
+.lab-banner p{margin:0;color:#7a4516;font-size:.9rem;line-height:1.6;}
+.lab-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:22px;}
+.lab-col h4{font-size:.95rem;color:var(--navy-700);margin:0 0 10px;}
+.lab-steps{list-style:none;margin:0 0 14px;padding:0;}
+.lab-step{display:flex;gap:10px;align-items:flex-start;cursor:pointer;
+  padding:9px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);
+  margin-bottom:7px;transition:.13s;background:#fff;}
+.lab-step:hover{border-color:var(--orange);background:var(--orange-bg);}
+.lab-step.checked{background:var(--green-bg);border-color:var(--green);}
+.lab-step.checked .lab-step-text{color:var(--ink-soft);text-decoration:line-through;}
+.lab-check{flex:none;width:20px;height:20px;border:2px solid var(--navy-300);border-radius:5px;
+  display:flex;align-items:center;justify-content:center;font-size:.8rem;color:#fff;
+  font-weight:800;margin-top:1px;transition:.13s;}
+.lab-step.checked .lab-check{background:var(--green);border-color:var(--green);}
+.lab-step-text{font-size:.9rem;line-height:1.55;}
+.lab-progress{margin-top:6px;}
+.lab-progress-bar{height:8px;background:var(--surface-2);border-radius:6px;overflow:hidden;}
+.lab-progress-bar span{display:block;height:100%;background:var(--green);
+  border-radius:6px;transition:width .25s;}
+.lab-progress-text{font-size:.78rem;color:var(--ink-soft);margin-top:5px;display:inline-block;}
+.lab-info{margin-bottom:16px;}
+.lab-info h4{margin:0 0 6px;}
+.lab-info p{margin:0;font-size:.88rem;line-height:1.65;color:var(--ink-soft);}
+.lab-info ul{margin:0;padding-left:20px;}
+.lab-info li{font-size:.88rem;line-height:1.6;margin:4px 0;color:var(--ink-soft);}
+.rubric{width:100%;border-collapse:collapse;}
+.rubric th{text-align:left;vertical-align:top;width:42%;padding:7px 10px;font-size:.84rem;
+  color:var(--navy-700);background:var(--surface);border:1px solid var(--line);}
+.rubric td{padding:7px 10px;font-size:.84rem;color:var(--ink-soft);border:1px solid var(--line);}
+
+/* 小測驗 */
+.quiz-hint{font-size:.86rem;color:var(--ink-soft);background:var(--surface);
+  padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:16px;}
+.quiz-item{border:1px solid var(--line);border-radius:var(--radius-sm);padding:16px 18px;margin-bottom:14px;}
+.quiz-q{font-weight:700;color:var(--ink);margin:0 0 12px;line-height:1.6;}
+.quiz-no{display:inline-block;background:var(--navy-700);color:#fff;font-size:.78rem;
+  padding:2px 9px;border-radius:12px;margin-right:8px;}
+.quiz-opts{display:grid;gap:8px;}
+.quiz-opt{display:flex;gap:11px;align-items:center;text-align:left;cursor:pointer;
+  font-family:inherit;font-size:.9rem;background:#fff;border:1px solid var(--line);
+  border-radius:var(--radius-sm);padding:11px 14px;transition:.13s;color:var(--ink);}
+.quiz-opt:hover:not(:disabled){border-color:var(--navy-300);background:var(--surface);}
+.opt-mark{flex:none;width:24px;height:24px;border-radius:50%;background:var(--surface-2);
+  color:var(--navy-700);font-weight:800;font-size:.82rem;display:flex;align-items:center;justify-content:center;}
+.quiz-opt.correct{background:var(--green-bg);border-color:var(--green);color:#1c6e48;font-weight:700;}
+.quiz-opt.correct .opt-mark{background:var(--green);color:#fff;}
+.quiz-opt.wrong{background:var(--red-bg);border-color:var(--red);color:#8f2f25;}
+.quiz-opt.wrong .opt-mark{background:var(--red);color:#fff;}
+.quiz-opt:disabled{cursor:default;}
+.quiz-exp{margin-top:12px;padding:11px 14px;background:var(--surface);
+  border-radius:var(--radius-sm);font-size:.86rem;line-height:1.65;color:var(--ink-soft);}
+.exp-tag{font-weight:800;margin-right:6px;}
+.exp-tag.ok{color:var(--green);}
+.exp-tag.no{color:var(--red);}
+
+/* 面板底部 */
+.panel-foot{display:flex;gap:12px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);
+  border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:18px 28px 22px;}
+.btn-done{cursor:pointer;font-family:inherit;font-size:.9rem;font-weight:700;
+  border:1.5px solid var(--green);background:#fff;color:var(--green);
+  padding:10px 20px;border-radius:24px;transition:.14s;}
+.btn-done:hover{background:var(--green-bg);}
+.btn-done.is-done{background:var(--green);color:#fff;}
+.btn-next{cursor:pointer;font-family:inherit;font-size:.9rem;font-weight:700;
+  border:none;background:var(--navy-700);color:#fff;padding:10px 22px;border-radius:24px;
+  margin-left:auto;transition:.14s;}
+.btn-next:hover{background:var(--navy-900);}
+.ext-box{background:var(--surface);border-radius:var(--radius-sm);padding:16px 20px;margin-bottom:16px;}
+.ext-box h4{margin:0 0 8px;color:var(--navy-700);font-size:.98rem;}
+.ext-box p{margin:0;line-height:1.7;}
+.teacher-box{background:#fff8ef;border:1px dashed var(--orange);border-radius:var(--radius-sm);padding:16px 20px;}
+.teacher-box h4{margin:0 0 8px;color:#a85a16;font-size:.98rem;}
+.teacher-box p{margin:0;line-height:1.75;color:#7a4516;font-size:.9rem;}
+
+/* 詞彙表 */
+.gloss-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);
+  padding:16px 18px;box-shadow:var(--shadow-sm);transition:.14s;}
+.gloss-card:hover{border-color:var(--navy-300);box-shadow:var(--shadow);}
+.gloss-term{font-size:1.05rem;font-weight:800;color:var(--navy-700);margin-bottom:8px;}
+.gloss-en{display:block;font-size:.76rem;font-weight:600;color:var(--orange);letter-spacing:.02em;margin-top:2px;}
+.gloss-def{margin:0;font-size:.86rem;line-height:1.7;color:var(--ink-soft);}
+
+/* 比較表 */
+.table-scroll{overflow-x:auto;border-radius:var(--radius-sm);border:1px solid var(--line);}
+.compare-table{width:100%;border-collapse:collapse;min-width:680px;}
+.compare-table thead th{background:var(--navy-700);color:#fff;font-size:.86rem;
+  padding:12px 14px;text-align:left;white-space:nowrap;}
+.compare-table tbody th{background:var(--surface);color:var(--navy-700);font-weight:800;
+  text-align:left;padding:11px 14px;font-size:.86rem;white-space:nowrap;border-bottom:1px solid var(--line);}
+.compare-table tbody td{padding:11px 14px;font-size:.85rem;color:var(--ink-soft);
+  border-bottom:1px solid var(--line);}
+.compare-table tbody tr:hover th,.compare-table tbody tr:hover td{background:var(--orange-bg);}
+.compare-note{font-size:.8rem;color:var(--ink-soft);margin-top:12px;font-style:italic;}
+
+/* 搜尋結果 */
+#searchResults{display:none;margin-top:10px;background:#fff;border:1px solid var(--line);
+  border-radius:var(--radius-sm);box-shadow:var(--shadow);max-height:60vh;overflow-y:auto;}
+#searchResults.show{display:block;}
+.search-hit{display:block;width:100%;text-align:left;cursor:pointer;font-family:inherit;
+  background:#fff;border:none;border-bottom:1px solid var(--line);padding:12px 16px;transition:.12s;}
+.search-hit:last-child{border-bottom:none;}
+.search-hit:hover{background:var(--surface);}
+.search-hit b{display:inline-block;margin-left:8px;color:var(--navy-700);font-size:.92rem;}
+.search-snip{display:block;font-size:.82rem;color:var(--ink-soft);margin-top:5px;line-height:1.6;}
+.search-snip mark,.search-hit mark{background:#ffe9b0;color:var(--ink);padding:0 2px;border-radius:3px;}
+.search-empty{padding:16px;color:var(--ink-soft);font-size:.88rem;}
+
+</style>
+</head>
+<body>
+
+<!-- ============ 頂部導覽 ============ -->
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand">流通業管理 <small>從傳統通路到 AI 時代的新零售</small></div>
+    <button class="menu-toggle" data-act="menu">☰</button>
+    <nav id="mainnav">
+      <a href="#hero">首頁</a>
+      <a href="#chapters">章節</a>
+      <a href="#timeline">時間軸</a>
+      <a href="#glossary">詞彙表</a>
+      <a href="#compare">比較表</a>
+      <a href="#review">總複習</a>
+      <a href="#guide">教師建議</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ Hero ============ -->
+<section class="hero" id="hero">
+  <div class="wrap">
+    <span class="eyebrow">大學 18 週課程 · 14 次正式授課 · 每次 90 分鐘</span>
+    <h1>流通業管理<br>從傳統通路到 AI 時代的新零售</h1>
+    <p class="sub">商品如何從工廠走到你手上？這門課帶你看懂便利商店、量販店、電商平台與物流背後的整套流通系統。</p>
+    <p class="lead">本網站是一份「可上課、可自學、可動手做」的互動教案：14 章完整內容、每章都有 Lab 實作與小測驗、可記錄學習進度、可列印備課。特別強化「台灣流通業」與「AI 時代流通業」兩大主題。</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="#chapters" data-act="chapter" data-id="1">▶ 開始學習</a>
+      <a class="btn btn-ghost" href="#timeline">查看學習路徑</a>
+      <a class="btn btn-ghost" href="#guide">教師使用建議</a>
+    </div>
+    <div class="hero-stats">
+      <div><b>14</b><span>正式教學章節</span></div>
+      <div><b>14</b><span>課堂 Lab 實作</span></div>
+      <div><b>45+</b><span>互動小測驗</span></div>
+      <div><b>14</b><span>重點詞彙</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 全域進度 + 搜尋 ============ -->
+<div class="searchbar">
+  <div class="box">
+    <span class="ico">🔍</span>
+    <input id="searchInput" type="text" placeholder="搜尋關鍵字，例如：便利商店、AI、物流、全聯、Amazon、假評論…" autocomplete="off">
+    <span class="hint">即時搜尋 14 章內容</span>
+  </div>
+  <div id="searchResults"></div>
+</div>
+
+<section class="bg-surface" style="padding-top:30px;padding-bottom:10px;">
+  <div class="global-progress">
+    <div class="gp-bar"><div class="gp-fill" id="gpFill"></div></div>
+    <p class="gp-text">
+      <span id="gpText">學習進度：0 / 14 章完成</span>
+      <button class="btn-reset" data-act="reset">重設進度</button>
+    </p>
+  </div>
+</section>
+
+<!-- ============ 學習時間軸 ============ -->
+<section class="bg-surface" id="timeline" style="padding-top:18px;">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">Learning Path</div>
+      <h2>14 週學習路徑</h2>
+      <p>從「流通業是什麼」一路走到「AI 時代的流通業未來與隱憂」。點任一站可直接跳到該章。綠色代表你已完成。</p>
+    </div>
+    <div class="timeline" id="timelineBar"></div>
+  </div>
+</section>
+
+<!-- ============ 章節卡片 + 內容面板 ============ -->
+<section class="bg-white" id="chapters">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">Curriculum</div>
+      <h2>課程章節</h2>
+      <p>點選下方任一章卡片即可在此展開完整教案：學習目標、90 分鐘流程、核心概念、台灣與國際案例、課堂討論、Lab 實作、小測驗與教師提醒。</p>
+    </div>
+    <div id="chapterPanel"></div>
+    <div class="grid-label"><span>📚 所有章節（點卡片切換）</span></div>
+    <div class="chapter-grid" id="chapterGrid"></div>
+  </div>
+</section>
+
+<!-- ============ 詞彙表 ============ -->
+<section class="bg-surface" id="glossary">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">Glossary</div>
+      <h2>重點詞彙表</h2>
+      <p>14 個貫穿全課的核心名詞。建議第 1 章先帶過一次，之後每章遇到再回來對照。</p>
+    </div>
+    <div class="glossary-grid" id="glossaryGrid"></div>
+  </div>
+</section>
+
+<!-- ============ 案例比較表 ============ -->
+<section class="bg-white" id="compare">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">Case Comparison</div>
+      <h2>代表性企業比較表</h2>
+      <p>把國際與台灣的指標企業放在同一張表，方便比較商業模式、獲利邏輯與通路定位。可左右滑動。</p>
+    </div>
+    <div class="compare-wrap" id="compareWrap"></div>
+    <p class="note-defer" style="margin-top:14px;">表中數據為概念性與常識性說明，非即時統計；授課前教師可補充最新財報與展店數字。</p>
+  </div>
+</section>
+
+<!-- ============ 總複習 ============ -->
+<section class="bg-surface" id="review">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker">Final Review</div>
+      <h2>總複習與成果展示</h2>
+      <p>14 章一句話總整理、期末討論題，以及學生小組報告題目建議。</p>
+    </div>
+    <h3 style="color:var(--navy-700);margin-bottom:10px;">📌 14 章一句話總整理</h3>
+    <div class="review-grid" id="reviewGrid"></div>
+
+    <h3 style="color:var(--navy-700);margin:30px 0 10px;">💬 期末綜合討論題</h3>
+    <ul class="proj-list" id="finalDiscuss"></ul>
+
+    <h3 style="color:var(--navy-700);margin:30px 0 10px;">🎤 小組期末報告題目建議</h3>
+    <ul class="proj-list" id="projectTopics"></ul>
+  </div>
+</section>
+
+<!-- ============ 教師使用建議 ============ -->
+<section class="bg-white" id="guide">
+  <div class="wrap">
+    <div class="teacher-guide" id="teacherGuide"></div>
+  </div>
+</section>
+
+<footer>
+  <p><b>流通業管理：從傳統通路到 AI 時代的新零售</b>　·　互動式教案網頁</p>
+  <p>課程設計：黄國津　·　全部內容繁體中文・台灣用語　·　可存成 index.html 直接使用</p>
+  <p style="font-size:.78rem;color:#7c93aa;margin-top:8px;">本教案案例以常識性說明為主，涉及最新數據處請於授課前補充查證。</p>
+</footer>
+
+<script>
+/* =========================================================================
+   課程資料：courseData（0 導覽 + 14 章）
+   每章欄位：
+     id, tag, title, oneLine, objectives[], schedule[{t,d}],
+     concepts(HTML), taiwan(HTML), intl(HTML),
+     discuss[], lab{name,goal,steps[],deliverable,tools,rubric[{c,d}],discuss[]},
+     quiz[{q,options[],answer,exp}], extension, teacherNote, reviewLine
+   ========================================================================= */
+const courseData = [];
+
+/* 章節資料於下方逐段 push 進來 */
+
+/* ---------- 第 0 頁：課前導覽（不列入 14 次課程） ---------- */
+courseData.push({
+  id:0, tag:"課前導覽", title:"課前導覽：這門課要學什麼？",
+  oneLine:"先搞懂「為什麼流通業重要」與「怎麼用這個網站學」，再正式進入 14 章課程。",
+  intro:true,
+  objectives:[
+    "理解流通業與每個人的日常生活息息相關，不是冷門產業。",
+    "認識本課程 14 章的整體地圖與學習節奏。",
+    "學會使用本網站：章節切換、Lab 勾選、小測驗、進度記錄與搜尋。",
+    "建立正確期待：這是一門「理論＋實作＋台灣產業」並重的課。"
+  ],
+  concepts:`
+    <h4>為什麼要學流通業？</h4>
+    <p>你今天的生活，幾乎被流通業包著走：早上在便利商店買咖啡、中午用外送 App 點便當、晚上在蝦皮下單、週末去全聯或好市多採買。這些行為背後，是一整套讓「商品從工廠移動到你手上」的系統，這就是<b>流通業（distribution industry）</b>。</p>
+    <p>台灣是全世界便利商店密度數一數二高的地方，流通業是支撐內需經濟的重要骨幹，也是商管學生畢業後最容易進入的產業之一：門市營運、採購、行銷企劃、物流規劃、電商營運、會員經營，全都屬於流通業的範圍。</p>
+    <h4>這門課的整體地圖</h4>
+    <ul>
+      <li><b>第 1–3 章（基礎與歷史）：</b>流通業是什麼、它怎麼演化、世界發生過哪些重大轉折。</li>
+      <li><b>第 4–5 章（國際案例）：</b>Walmart、Costco、Amazon、日本超商、Uniqlo、Alibaba、Shopee。</li>
+      <li><b>第 6–8 章（台灣產業）：</b>超商、超市量販會員制、電商與外送平台。</li>
+      <li><b>第 9–11 章（核心管理）：</b>門市與選址、商品庫存物流、會員與消費者資料。</li>
+      <li><b>第 12–14 章（科技與未來）：</b>智慧零售、AI 時代流通業、未來展望與風險。</li>
+    </ul>
+    <h4>怎麼使用這個網站</h4>
+    <ul>
+      <li><b>章節卡片：</b>點任一章即可展開完整教案。</li>
+      <li><b>分頁標籤：</b>每章內含「概念 / 案例 / 課堂活動 / Lab / 小測驗 / 教師提醒」分頁。</li>
+      <li><b>Lab 勾選：</b>做完一個步驟就勾一格，系統會幫你記錄。</li>
+      <li><b>小測驗：</b>點選答案會立刻顯示對錯與解析。</li>
+      <li><b>進度記錄：</b>你的完成狀態會自動存在這台裝置（localStorage），下次打開還在。</li>
+      <li><b>搜尋：</b>頂部搜尋框可找關鍵字，例如「全聯」「OMO」「假評論」。</li>
+    </ul>
+    <div class="callout green">學習建議：每章先看「概念」與「案例」，再動手做「Lab」，最後用「小測驗」自我檢查。教師可直接照「90 分鐘流程」上課。</div>
+  `,
+  reviewLine:"流通業＝讓商品從工廠走到消費者手上的整套系統，與你的生活密不可分。"
+});
+
+/* ---------- 第 1 章 ---------- */
+courseData.push({
+  id:1, tag:"基礎概念", title:"流通業是什麼？",
+  oneLine:"流通業是讓商品「從工廠順利走到消費者手上」的整套系統，涵蓋批發、零售、物流與平台，絕不等於零售業。",
+  objectives:[
+    "能用自己的話定義流通業，並說明它與製造業、零售業、物流業、服務業的關係。",
+    "能說出流通業的三大功能：連結生產與消費、創造效用、降低交易成本。",
+    "能分辨批發、零售、物流、平台四種角色的不同。",
+    "能挑一件商品，畫出它從工廠到消費者的流通路徑。"
+  ],
+  schedule:[
+    {t:"0–10 分鐘",d:"導入問題：拿出一瓶便利商店礦泉水，問學生「它從哪裡來？中間經過幾隻手？為什麼要 20 元？」引發對『中間過程』的好奇。"},
+    {t:"10–35 分鐘",d:"核心概念講解：流通業定義、與製造／零售／物流／服務業的關係、三大功能、四種角色（批發／零售／物流／平台）。"},
+    {t:"35–60 分鐘",d:"案例分析與討論：以全聯一盒雞蛋、7-ELEVEN 御飯糰為例，拆解流通路徑；分組討論「沒有流通業會發生什麼事」。"},
+    {t:"60–80 分鐘",d:"Lab：商品流通路徑追追追——學生挑一件實體商品，畫出工廠到貨架的完整路徑。"},
+    {t:"80–90 分鐘",d:"回顧重點、收 Lab 成果、說明課後延伸任務與下週主題（流通業的歷史起點）。"}
+  ],
+  concepts:`
+    <h4>一句話定義</h4>
+    <p><b>流通業</b>是負責把「生產者做出來的商品」送到「消費者手上」的整個產業系統。它解決三個落差：生產地點和消費地點不同（地點落差）、生產時間和消費時間不同（時間落差）、生產者和消費者彼此不認識（資訊與信任落差）。</p>
+    <div class="callout blue">關鍵提醒：<b>流通業 ≠ 零售業</b>。零售業（賣給最終消費者）只是流通業的「最後一棒」。流通業還包含批發、物流、平台與供應鏈管理。把流通業簡化成零售業，是初學者最常犯的錯。</div>
+    <h4>流通業與其他產業的關係</h4>
+    <ul>
+      <li><b>製造業（生產）：</b>把原料變成商品，例如義美做餅乾、台灣菸酒做啤酒。流通業負責把這些商品「賣出去、送出去」。</li>
+      <li><b>零售業（賣給消費者）：</b>便利商店、超市、量販、百貨、電商，是流通業「面對消費者的那一端」。</li>
+      <li><b>批發業（賣給店家）：</b>大盤、中盤商，把商品大量賣給零售店，是流通業「中間那一段」。</li>
+      <li><b>物流業（搬運與保管）：</b>負責倉儲、配送、冷鏈，例如新竹物流、宅配通。是流通業的「血管」。</li>
+      <li><b>服務業（提供體驗）：</b>流通業本身高度服務化——結帳、退換貨、會員服務、店員態度，都是服務品質的一部分。</li>
+    </ul>
+    <h4>流通業的三大功能</h4>
+    <ul>
+      <li><b>連結生產與消費：</b>農民種高麗菜、工廠做泡麵，但消費者不可能一個個去產地買。流通業把分散的供給集中、再分配給分散的需求。</li>
+      <li><b>創造三種效用：</b>時間效用（讓你半夜也買得到）、地點效用（讓你家附近就有店）、持有效用（讓你能小量購買、馬上帶走）。</li>
+      <li><b>降低交易成本：</b>如果每個人都要直接找工廠談價、驗貨、運送，社會成本會高到無法運作。流通業用規模化把成本壓低。</li>
+    </ul>
+    <h4>四種核心角色</h4>
+    <ul>
+      <li><b>批發：</b>大量買、大量賣給店家（B2B）。例如食品大盤商把飲料賣給雜貨店。</li>
+      <li><b>零售：</b>小量賣給最終消費者（B2C）。例如全家賣你一瓶飲料。</li>
+      <li><b>物流：</b>負責「移動與保管」。商品在工廠、倉庫、門市之間的運送與儲存。</li>
+      <li><b>平台：</b>不一定自己持有商品，而是「媒合買賣雙方」。例如蝦皮、Uber Eats，靠撮合交易與資料賺錢。</li>
+    </ul>
+  `,
+  taiwan:`
+    <h4>台灣案例：一盒全聯雞蛋的旅程</h4>
+    <p>蛋農（生產）→ 蛋商／集貨場分級洗選（批發＋加工）→ 全聯生鮮配送中心（物流）→ 各門市冷藏櫃（零售）→ 你的購物籃。中間還有檢驗、定價、補貨排程。一盒蛋之所以能新鮮、穩定、價格透明地出現在你家附近，是整條流通鏈協作的結果。</p>
+    <h4>台灣案例：7-ELEVEN 御飯糰</h4>
+    <p>米飯與配料供應商（生產）→ 鮮食代工廠製作（製造）→ 統一速達低溫物流一天多次配送（物流，這是超商鮮食的關鍵）→ 門市上架、過期即下架（零售＋報廢管理）。御飯糰的「現做感」其實是靠精準的物流頻率與庫存管理撐出來的。</p>
+  `,
+  intl:`
+    <h4>國際視角：流通業是經濟的「血液循環」</h4>
+    <p>在美國，沃爾瑪（Walmart）長年是全球營收最大的企業之一，它本質上不是製造商，而是把全世界商品有效率地送到消費者面前的<b>流通巨人</b>。亞馬遜（Amazon）則把「平台＋物流」做到極致：它既是零售商、也是平台、也是物流公司。這說明現代流通業的四種角色常常融合在同一家公司裡。</p>
+    <div class="callout">觀察點：愈強的流通業者，愈傾向「往上整合（自己做物流、做自有品牌）」與「平台化（媒合別人來賣）」。這條主軸會貫穿整門課。</div>
+  `,
+  discuss:[
+    "如果台灣突然沒有任何便利商店與超市，只剩工廠直銷，你的一天會變成什麼樣子？哪些事情會變得很困難？",
+    "「流通業就是開店賣東西」這句話哪裡不完整？請至少補上批發、物流、平台三個面向。",
+    "外送平台（如 Uber Eats）究竟算不算流通業？它在四種角色裡比較像哪一種？為什麼？"
+  ],
+  lab:{
+    name:"Lab 1：商品流通路徑追追追",
+    goal:"挑一件你身邊真實存在的商品，把它「從工廠到你手上」的流通路徑完整畫出來，並指出每一段屬於批發、零售、物流還是平台。",
+    steps:[
+      "從書包或便利商店挑一件實體商品（飲料、零食、文具皆可），把品名與品牌寫下來。",
+      "上網或看包裝，找出製造商／代工廠資訊（誰生產的）。",
+      "推測它經過哪些中間環節：是經銷商、總代理，還是品牌直供通路？",
+      "判斷你是在哪種零售通路買到的：超商、超市、量販、電商或其他。",
+      "把整條路徑畫成一條箭頭流程圖：生產 →（批發/物流）→ 零售 → 你。",
+      "在每一段標註它屬於『批發、零售、物流、平台』中的哪一種角色。"
+    ],
+    deliverable:"一張手繪或數位的「商品流通路徑圖」，含至少 4 個節點，並標明每段的角色類型，附 2 句心得：你覺得哪一段最關鍵？",
+    tools:"手機（查製造商）、商品包裝、紙筆或 Google 簡報／Canva、可選用 AI 工具協助查資料。",
+    rubric:[
+      {c:"路徑完整度（40%）",d:"是否畫出生產到消費者的完整鏈，至少 4 個節點。"},
+      {c:"角色標註正確（30%）",d:"批發／零售／物流／平台的判斷是否合理。"},
+      {c:"具體性（20%）",d:"是否寫出真實品牌、真實通路，而非空泛敘述。"},
+      {c:"心得反思（10%）",d:"是否指出最關鍵環節並說明理由。"}
+    ],
+    discuss:[
+      "你的商品路徑裡，有沒有哪一段其實是同一家公司一手包辦（垂直整合）？",
+      "如果少了其中一段，消費者會多付出什麼代價（時間、金錢、便利性）？"
+    ]
+  },
+  quiz:[
+    {q:"下列哪一句最正確地描述「流通業」？",
+     options:["流通業就是零售業的另一個名字","流通業只負責商品的運送","流通業是把商品從生產者送到消費者的整套系統，含批發、零售、物流與平台","流通業是製造業的一部分"],
+     answer:2, exp:"流通業是涵蓋批發、零售、物流、平台的整套系統，零售業只是其中面對消費者的最後一棒。"},
+    {q:"便利商店能讓你半夜也買得到飲料，這主要創造了哪一種效用？",
+     options:["時間效用","品牌效用","製造效用","匯率效用"],
+     answer:0, exp:"24 小時營業讓消費時間不再受生產時間限制，屬於時間效用；地點效用是「家附近就有」，持有效用是「能小量買、馬上帶走」。"},
+    {q:"蝦皮、Uber Eats 這類「不一定自己持有商品、而是媒合買賣雙方」的角色，最接近流通業中的哪一種？",
+     options:["批發","物流","平台","製造"],
+     answer:2, exp:"它們靠撮合交易與資料運作，屬於平台角色；現代流通業中平台的重要性越來越高。"},
+    {q:"「把流通業簡化成零售業」為什麼是錯的？",
+     options:["因為零售業比較高級","因為流通業還包含批發、物流、平台與供應鏈管理","因為零售業不賺錢","因為流通業不面對消費者"],
+     answer:1, exp:"零售只是最後一棒，流通業還包含上游的批發、物流與平台等多個環節。"}
+  ],
+  extension:"課後任務：觀察你家方圓 500 公尺內，數一數有幾家不同類型的流通通路（超商、超市、量販、藥妝、傳統店、外送涵蓋範圍），拍照記錄並寫下『你最常用哪一種、為什麼』。下週帶來分享。",
+  teacherNote:"學生最常見的誤解是把『流通業＝零售業＝開店賣東西』。本章一定要反覆強調批發、物流、平台三個常被忽略的角色。另一個易混淆點是『物流業 vs 流通業』：物流是流通業的一部分（負責搬運保管），不是同義詞。畫流通路徑圖時，學生常漏掉『物流』這一段，可提醒他們：商品不會自己飛到貨架上。",
+  reviewLine:"流通業是連結生產與消費的整套系統，由批發、零售、物流、平台四種角色組成。"
+});
+
+/* ---------- 第 2 章 ---------- */
+courseData.push({
+  id:2, tag:"產業歷史", title:"流通業的歷史起點",
+  oneLine:"從傳統市場、雜貨店、批發商到百貨公司，流通業的每一次演化，都是為了解決「買賣雙方更有效率地相遇」這件事。",
+  objectives:[
+    "能依序說明傳統市場、雜貨店、批發商、百貨公司出現的背景與功能。",
+    "能解釋『為什麼會出現批發商』——也就是中間商存在的經濟理由。",
+    "能說明百貨公司為什麼是流通業現代化的第一個里程碑。",
+    "能把這些早期業態對應到今天還看得到的影子。"
+  ],
+  schedule:[
+    {t:"0–10 分鐘",d:"導入：放一張早期台灣傳統市場或柑仔店的照片，問學生『阿公阿嬤那個年代，東西要去哪裡買？』連結世代記憶。"},
+    {t:"10–35 分鐘",d:"核心概念：傳統市場 → 雜貨店（柑仔店）→ 批發商 → 百貨公司的演化邏輯，重點講『中間商為何存在』與『百貨公司的創新』。"},
+    {t:"35–60 分鐘",d:"案例：以台灣傳統市場、迪化街批發、早期百貨（如第一代百貨公司）為例討論；分組比較『柑仔店 vs 現代超商』。"},
+    {t:"60–80 分鐘",d:"Lab：傳統市場 vs 現代通路田野對照——用觀察表比較兩種業態的差異。"},
+    {t:"80–90 分鐘",d:"回顧、收成果、預告下一章（世界流通業的重大轉折）。"}
+  ],
+  concepts:`
+    <h4>演化的起點：以物易物與傳統市場</h4>
+    <p>最早人類用「以物易物」交換，效率很差（你有米、想換鞋，但做鞋的人剛好不需要米就換不成）。<b>貨幣</b>出現後，買賣才順暢。接著人們約在固定地點、固定時間交易，形成<b>傳統市場（市集）</b>——這是流通業的雛形：把分散的供給與需求集中到一個地方。</p>
+    <h4>雜貨店（柑仔店）：最早的零售據點</h4>
+    <p>當聚落變大，不可能天天趕集，於是出現了<b>雜貨店</b>——台語叫「柑仔店」。它就近供應日常用品，是最早的固定零售店。柑仔店的特色是：品項雜、靠人情關係、賒帳、老闆什麼都懂。今天的便利商店，可以看成「現代化、連鎖化、標準化的柑仔店」。</p>
+    <h4>批發商：中間商為什麼存在？</h4>
+    <p>很多人覺得「中間商就是賺差價」，但批發商其實大幅降低了交易成本。想像 10 家工廠要賣給 10 家零售店：</p>
+    <ul>
+      <li>沒有批發商：10 × 10 = <b>100 條交易關係</b>，每條都要談價、運送、驗貨。</li>
+      <li>有批發商：10 家工廠 → 1 個批發商 → 10 家店 = <b>20 條關係</b>。</li>
+    </ul>
+    <p>批發商透過「集中採購、分散銷售」把交易次數大幅減少，這就是中間商的經濟價值。台北迪化街、各地的果菜批發市場，都是批發環節的代表。</p>
+    <h4>百貨公司：流通業現代化的第一個里程碑</h4>
+    <p>19 世紀，世界第一批百貨公司在歐美出現（如法國的 Le Bon Marché）。它帶來幾個革命性創新：</p>
+    <ul>
+      <li><b>明碼標價：</b>不必再討價還價，價格透明、人人平等。</li>
+      <li><b>商品分區（部門化）：</b>服飾、家用、化妝品分樓層，是現代「品類管理」的祖先。</li>
+      <li><b>可自由逛、不買也沒關係：</b>把購物變成一種休閒體驗。</li>
+      <li><b>退換貨制度：</b>建立消費者信任。</li>
+    </ul>
+    <p>百貨公司讓「逛街」成為一種生活方式，也第一次把零售經營變成一門需要管理的專業。</p>
+  `,
+  taiwan:`
+    <h4>台灣案例：柑仔店、傳統市場與迪化街</h4>
+    <p>早期台灣的零售由<b>柑仔店</b>與<b>傳統市場</b>撐起，靠的是地緣與人情。<b>迪化街</b>則是經典的批發聚落——南北貨、中藥、布料的大盤集散地，至今仍保留批發功能，年貨大街時最熱鬧。這些都是流通業歷史的活教材。</p>
+    <h4>台灣案例：百貨公司的世代</h4>
+    <p>台灣百貨業從早期的本土百貨，到後來日系（如新光三越、SOGO）與大型購物中心進入，一路演化。百貨公司在台灣不只是賣場，更發展出「美食街＋電影院＋專櫃＋週年慶」的複合體驗，這正是百貨『把購物變休閒』精神的延續。<span class="note-defer">各百貨集團的最新展店與營收，教師可於授課前補充最新資料。</span></p>
+  `,
+  intl:`
+    <h4>國際案例：百貨公司的誕生</h4>
+    <p>1852 年法國巴黎的 <b>Le Bon Marché</b> 常被視為世界第一家現代百貨公司，明碼標價、退貨保證、季節特賣等做法影響了全世界。美國的梅西百貨（Macy's）、英國的哈洛德（Harrods）也都是百貨黃金年代的代表。它們證明了一件事：零售不只是把東西擺出來，而是可以被『設計』與『管理』的體驗。</p>
+  `,
+  discuss:[
+    "「中間商只是賺差價、應該被消滅」這個說法，從交易成本的角度看哪裡不對？什麼情況下中間商真的會被取代？",
+    "今天的便利商店，繼承了柑仔店的哪些特質？又拋棄了哪些？",
+    "百貨公司把『購物變成休閒』，這個概念如何延續到今天的購物中心與電商直播？"
+  ],
+  lab:{
+    name:"Lab 2：傳統市場 vs 現代通路田野對照",
+    goal:"實地（或線上街景）觀察一個傳統市場／柑仔店與一家現代超商／超市，用同一張表比較兩者在價格、品項、服務、付款、體驗上的差異。",
+    steps:[
+      "選定一個傳統通路（傳統市場、菜市場、柑仔店）與一個現代通路（超商或超市）。",
+      "設計一張對照表，欄位至少含：營業時間、品項範圍、是否明碼標價、付款方式、是否會員制、人際互動程度。",
+      "實地走訪或用 Google Maps 街景＋官網蒐集資訊，逐欄填寫。",
+      "各拍／截一張代表性畫面（注意不拍攝到他人臉部，尊重隱私）。",
+      "在表格下方寫出 3 點『現代通路解決了傳統通路的哪些不便』。"
+    ],
+    deliverable:"一張完整對照表（至少 6 個比較欄位）＋ 3 點觀察結論。",
+    tools:"手機、Google Maps 街景、紙筆或試算表（Google Sheets）。",
+    rubric:[
+      {c:"比較欄位完整（35%）",d:"是否涵蓋至少 6 個有意義的比較面向。"},
+      {c:"觀察具體（35%）",d:"是否填入真實、具體的觀察，而非想當然耳。"},
+      {c:"結論洞察（30%）",d:"3 點結論是否真的點出兩種業態的本質差異。"}
+    ],
+    discuss:[
+      "傳統市場有沒有現代通路『學不來』的優勢？（例如人情、現殺現切、議價樂趣）",
+      "如果你要在這個社區開一家新店，你會偏向傳統還是現代模式？為什麼？"
+    ]
+  },
+  quiz:[
+    {q:"批發商（中間商）存在最主要的經濟理由是？",
+     options:["可以哄抬物價","透過集中採購、分散銷售大幅降低交易次數與成本","因為政府規定一定要有","因為工廠不想賺錢"],
+     answer:1, exp:"批發商把『多對多』的交易關係簡化，降低社會整體交易成本，這是中間商的核心價值。"},
+    {q:"下列哪一項『不是』19 世紀百貨公司帶來的革命性創新？",
+     options:["明碼標價","商品分區（部門化）","行動支付","退換貨制度"],
+     answer:2, exp:"行動支付是 21 世紀的科技；明碼標價、部門化、退換貨才是百貨公司當年的創新。"},
+    {q:"今天的便利商店可以看成是什麼業態的『現代化、連鎖化版本』？",
+     options:["百貨公司","柑仔店（雜貨店）","果菜批發市場","量販店"],
+     answer:1, exp:"便利商店就近供應日常用品、品項雜、貼近社區，是標準化、連鎖化後的柑仔店。"}
+  ],
+  extension:"課後任務：訪問一位長輩（父母或祖父母），請他們描述年輕時『買東西的方式』與『最常去的店』，整理成 200 字小故事，下週分享。比較那個年代與現在的差異。",
+  teacherNote:"本章最容易被學生當成『無聊的歷史課』，建議多用世代對比與在地照片連結情感。講『中間商』時，務必用 10×10 vs 20 的交易次數例子，學生才會真的懂中間商不是『純剝削』。另外避免讓學生以為業態是『一個取代一個』——其實傳統市場、柑仔店至今仍與現代通路共存，是並存而非完全替代。",
+  reviewLine:"從傳統市場到百貨公司，每個業態都在解決『買賣雙方如何更有效率相遇』。"
+});
+
+/* ---------- 第 3 章 ---------- */
+courseData.push({
+  id:3, tag:"產業歷史", title:"世界流通業的重大轉折",
+  oneLine:"超市自助購物、連鎖經營、條碼 POS、物流革命、電子商務、行動支付與 AI，是把流通業推向現代化的七大引擎。",
+  objectives:[
+    "能依時間順序說出流通業的關鍵轉折點。",
+    "能解釋『自助式購物』與『連鎖經營』為什麼能大幅提升效率。",
+    "能說明條碼／POS 與物流革命如何讓現代零售變得可管理、可擴張。",
+    "能描述從電子商務到 AGI 智慧零售的演化方向。"
+  ],
+  schedule:[
+    {t:"0–10 分鐘",d:"導入：請學生想像『沒有條碼的結帳會怎樣』——店員要一個個翻價目表。引出科技如何改變流通。"},
+    {t:"10–35 分鐘",d:"核心概念：依序講解 7 大轉折（自助購物→連鎖→條碼POS→供應鏈物流→電商→行動支付OMO→AI智慧零售）。"},
+    {t:"35–60 分鐘",d:"案例：用一條時間軸把轉折串起來；分組討論『哪一個轉折對台灣影響最大』。"},
+    {t:"60–80 分鐘",d:"Lab：流通業時間軸製作——學生排序並標註每個轉折的影響。"},
+    {t:"80–90 分鐘",d:"回顧、收成果，預告下一章（國際案例一：Walmart、Costco、Amazon）。"}
+  ],
+  concepts:`
+    <h4>七大轉折，一條主軸</h4>
+    <p>流通業現代化的故事，可以濃縮成七個轉折。它們的共同主軸是：<b>用標準化與科技，不斷降低成本、擴大規模、貼近消費者</b>。</p>
+    <h4>① 超級市場與自助式購物（1930s 起）</h4>
+    <p>過去買東西要請店員幫你拿（櫃台式）。<b>超市</b>讓你自己拿籃子、自己挑、最後到收銀台結帳。這個『自助』看似簡單，卻大幅減少人力、加快流速、讓消費者買更多。自助式是現代零售效率的起點。</p>
+    <h4>② 連鎖經營（Chain Store）</h4>
+    <p>把一家成功的店『複製』成很多家，統一招牌、統一採購、統一管理。連鎖帶來<b>規模經濟</b>：採購量大→進貨便宜→售價更有競爭力。便利商店、速食、藥妝幾乎都是連鎖模式。連鎖也帶出『加盟』這個重要制度（後面章節會深入）。</p>
+    <h4>③ 條碼與 POS 系統（1970s 起）</h4>
+    <p><b>條碼（barcode）</b>＋<b>POS（Point of Sale，銷售時點系統）</b>是零售業的隱形革命。每一筆結帳都被記錄下來：什麼商品、什麼時間、賣了幾個。這讓店家第一次能<b>用數據管理</b>——知道什麼好賣、什麼該補貨、什麼該淘汰。沒有 POS，就沒有後來的大數據與 AI 補貨。</p>
+    <h4>④ 供應鏈管理與物流革命</h4>
+    <p>當連鎖店越開越多，『如何把對的商品、在對的時間、送到對的店』變成決勝關鍵。<b>配送中心（DC）</b>、<b>冷鏈</b>、<b>即時補貨</b>讓零售商能用更少庫存、更快週轉。Walmart 就是靠強大的物流與供應鏈崛起的。</p>
+    <h4>⑤ 電子商務（E-commerce）</h4>
+    <p>網路讓『店』不再需要實體空間，消費者在家就能下單。電商打破營業時間與地理限制，也帶來『無限貨架（long tail）』——實體店放不下的冷門商品，網路上都賣得到。Amazon、阿里巴巴是代表。</p>
+    <h4>⑥ 行動支付與 OMO</h4>
+    <p>智慧型手機讓支付、瀏覽、下單在掌心完成。<b>OMO（Online-Merge-Offline，線上線下融合）</b>讓界線消失：你可以線上下單、門市取貨；也可以在實體店掃碼、用 App 集點。消費者旅程變成『虛實穿梭』。</p>
+    <h4>⑦ AI、資料驅動與智慧零售</h4>
+    <p>最新一波是<b>用資料與 AI 做決策</b>：個人化推薦、預測式補貨、AI 定價、生成式 AI 導購。零售從『憑經驗』走向『憑數據與演算法』。這也是本課後半段的重點。</p>
+    <div class="callout">一句話串起來：自助化（省人力）→ 連鎖化（拚規模）→ 數位化（POS 記錄）→ 物流化（拚效率）→ 網路化（破地理）→ 行動化（虛實融合）→ 智慧化（AI 決策）。</div>
+  `,
+  taiwan:`
+    <h4>台灣案例：七大轉折在台灣都看得到</h4>
+    <ul>
+      <li><b>自助購物：</b>從早期超市進入台灣開始，消費者習慣自己推車挑選。</li>
+      <li><b>連鎖：</b>7-ELEVEN、全家把連鎖經營推到極致，台灣超商密度世界數一數二。</li>
+      <li><b>條碼 POS：</b>超商的 POS 系統能精準掌握每家店每個時段的銷售，是鮮食管理的基礎。</li>
+      <li><b>物流：</b>統一速達、全家物流的低溫多次配送，撐起超商鮮食與冷藏戰力。</li>
+      <li><b>電商：</b>momo、PChome、蝦皮快速成長，改變台灣人的購物習慣。</li>
+      <li><b>行動支付 / OMO：</b>超商 App、街口、LINE Pay、會員集點與『線上訂、門市取』日益普及。</li>
+      <li><b>AI：</b>大型通路開始導入 AI 補貨預測、會員推薦與智慧客服。<span class="note-defer">各家最新導入進度，教師可於授課前補充。</span></li>
+    </ul>
+  `,
+  intl:`
+    <h4>國際案例：每個轉折都有代表者</h4>
+    <ul>
+      <li><b>自助超市：</b>美國 Piggly Wiggly 常被視為自助式超市的先驅。</li>
+      <li><b>連鎖：</b>美國 A&P 等早期連鎖雜貨擴張，奠定連鎖模式。</li>
+      <li><b>條碼：</b>1974 年美國一包口香糖成為史上第一個被條碼掃描結帳的商品，象徵 POS 時代來臨。</li>
+      <li><b>物流供應鏈：</b>Walmart 以衛星連線、交叉轉運（cross-docking）建立物流優勢。</li>
+      <li><b>電商與 AI：</b>Amazon 從網路書店一路做到雲端、物流與 AI 推薦，是七大轉折的集大成者。</li>
+    </ul>
+    <p class="note-defer">以上為流通史上的常識性里程碑；精確年份與細節，教師可於授課前查證補充。</p>
+  `,
+  discuss:[
+    "七大轉折中，你認為哪一個對『台灣一般消費者的日常生活』影響最大？請說明理由。",
+    "條碼 POS 被稱為『隱形革命』，為什麼是隱形的？它默默改變了哪些經營決策？",
+    "如果把『AI 智慧零售』看成第七個轉折，它和前面六個最大的不同是什麼？（提示：從『記錄資料』到『用資料做決策』）"
+  ],
+  lab:{
+    name:"Lab 3：流通業時間軸製作",
+    goal:"把七大轉折排成一條時間軸，為每個轉折寫一句『它解決了什麼問題』與一個『今天還看得到的例子』。",
+    steps:[
+      "在紙上或簡報畫一條由左到右的時間軸。",
+      "把七大轉折（自助購物、連鎖、條碼POS、物流供應鏈、電商、行動支付OMO、AI智慧零售）依序標上。",
+      "每個轉折下方寫一句『它解決了什麼痛點』。",
+      "每個轉折再配一個『你生活中看得到的例子』（例如連鎖→你家巷口的全家）。",
+      "用不同顏色標出『科技類』與『經營模式類』的轉折。",
+      "在最後加一格『第八個轉折』，預測未來流通業的下一個重大轉折會是什麼。"
+    ],
+    deliverable:"一條含七大轉折＋自己預測『第八轉折』的時間軸，每格皆有痛點與生活例子。",
+    tools:"紙筆、Google 簡報、Canva，或線上時間軸工具；可用 AI 協助發想第八轉折。",
+    rubric:[
+      {c:"順序與正確性（30%）",d:"七大轉折排序與內容是否正確。"},
+      {c:"痛點對應（30%）",d:"每個轉折是否正確說出它解決的問題。"},
+      {c:"生活連結（20%）",d:"是否舉出貼近自身的真實例子。"},
+      {c:"未來預測（20%）",d:"第八轉折的預測是否有想法、有理由。"}
+    ],
+    discuss:[
+      "你預測的『第八轉折』，需要哪些技術或社會條件才會發生？",
+      "有沒有可能某個舊轉折『被回頭取代』？例如無人店會不會讓自助購物再進化？"
+    ]
+  },
+  quiz:[
+    {q:"超市的『自助式購物』之所以重要，主要是因為它？",
+     options:["讓商品變貴","減少人力、加快結帳流速、讓消費者買更多","禁止消費者自己拿商品","只賣高價商品"],
+     answer:1, exp:"自助式把『店員幫你拿』改成『你自己挑』，大幅節省人力並提升效率，是現代零售效率的起點。"},
+    {q:"條碼與 POS 系統對流通業最深遠的影響是？",
+     options:["讓商品更好看","讓店家能用數據掌握銷售、管理庫存與汰換商品","取代了所有店員","讓商品免費"],
+     answer:1, exp:"POS 記錄每筆交易，讓零售第一次能『用數據管理』，是後來大數據與 AI 補貨的基礎。"},
+    {q:"OMO（Online-Merge-Offline）描述的是？",
+     options:["只做線上不做線下","線上與線下融合、消費者虛實穿梭","關閉所有實體店","只接受現金"],
+     answer:1, exp:"OMO 強調線上線下界線消失，例如線上下單門市取貨、實體店掃碼集點。"},
+    {q:"把七大轉折濃縮成一條主軸，最貼切的是？",
+     options:["不斷漲價","用標準化與科技降低成本、擴大規模、貼近消費者","盡量減少商品種類","回到以物易物"],
+     answer:1, exp:"從自助化到智慧化，貫穿的主軸都是用標準化與科技降成本、拚規模、更貼近消費者。"}
+  ],
+  extension:"課後任務：選一家你常去的通路，找出它身上同時存在的『三個轉折的影子』（例如：連鎖＋POS＋行動支付），各舉一個具體證據，寫成 150 字。",
+  teacherNote:"本章資訊量大，切忌把它上成『背年份』。重點是讓學生掌握『轉折之間的因果關係與主軸』，而不是死記時間。年份部分（如 1974 條碼、Piggly Wiggly）屬常識性里程碑，若學生追問精確細節，誠實說明可課後查證，不要編造。建議用一條視覺時間軸貫穿整堂課，學生最有感。",
+  reviewLine:"流通業現代化＝自助化→連鎖化→數位化→物流化→網路化→行動化→智慧化七大轉折。"
+});
+
+/* ---------- 第 4 章 ---------- */
+courseData.push({
+  id:4, tag:"國際案例", title:"國際流通業案例一：Walmart、Costco、Amazon",
+  oneLine:"同樣是巨人，Walmart 靠『天天低價＋物流』、Costco 靠『會員＋精選大包裝』、Amazon 靠『平台＋資料＋物流』，三種獲利邏輯完全不同。",
+  objectives:[
+    "能說出 Walmart、Costco、Amazon 三者的核心商業模式。",
+    "能比較『靠賣商品賺錢』與『靠會員費賺錢』的差異。",
+    "能解釋 Amazon 為什麼同時是零售商、平台與物流公司。",
+    "能把三者的模式對照到它們在台灣的對應者。"
+  ],
+  schedule:[
+    {t:"0–10 分鐘",d:"導入：問學生『好市多為什麼要收會員費？沒有會員費它會怎樣？』引出獲利模式的差異。"},
+    {t:"10–35 分鐘",d:"核心概念：拆解三家公司的獲利邏輯（Walmart 低價物流／Costco 會員精選／Amazon 平台資料物流）。"},
+    {t:"35–60 分鐘",d:"案例分析：三家比較表逐欄討論；分組辯論『哪一種模式最難被模仿』。"},
+    {t:"60–80 分鐘",d:"Lab：三巨頭商業模式拆解卡。"},
+    {t:"80–90 分鐘",d:"回顧、收成果，預告下一章（亞洲案例）。"}
+  ],
+  concepts:`
+    <h4>Walmart：天天低價（EDLP）＋物流帝國</h4>
+    <p>Walmart 的核心是 <b>EDLP（Every Day Low Price，天天都便宜）</b>：不靠忽高忽低的促銷，而是長期維持低價。要做到長期低價，背後必須有極致的成本控制與<b>強大物流供應鏈</b>——大量採購壓低進價、用配送中心與交叉轉運降低運輸成本、用資訊系統即時掌握庫存。Walmart 本質是『用物流與規模換低價』。</p>
+    <h4>Costco：會員制＋精選大包裝</h4>
+    <p>Costco 的獲利邏輯很特別：它<b>賣商品幾乎不太賺錢，主要利潤來自會員年費</b>。因為要靠會員費，它必須讓會員覺得『超值到非辦卡不可』，於是：</p>
+    <ul>
+      <li>商品<b>數量精選</b>（SKU 少），每類只挑最暢銷的幾種，採購量集中、議價力強。</li>
+      <li><b>大包裝、低單價</b>，給人撿到便宜的感覺。</li>
+      <li><b>尋寶式陳列</b>，季節商品、限時好物製造『不買會錯過』的驚喜。</li>
+      <li>自有品牌 <b>Kirkland</b> 拉高品質與毛利。</li>
+    </ul>
+    <p>Costco 把『顧客忠誠』直接變成『會員續約率』，是會員經濟的經典。</p>
+    <h4>Amazon：平台＋資料＋物流的飛輪</h4>
+    <p>Amazon 同時扮演三種角色：<b>自營零售商</b>（自己進貨賣）、<b>平台</b>（讓第三方賣家上架）、<b>物流公司</b>（FBA 物流、自建配送）。它還有兩個強大引擎：</p>
+    <ul>
+      <li><b>推薦演算法：</b>用你的瀏覽與購買資料，精準推你可能想買的東西。</li>
+      <li><b>會員訂閱（Prime）：</b>用快速到貨＋影音等服務綁住消費者。</li>
+    </ul>
+    <p>Amazon 的『飛輪效應』：更多賣家→更多選擇→更多買家→更多資料→更好推薦→更多買家…循環放大。它把零售、平台、物流、雲端與 AI 全部整合，是現代流通業的縮影。</p>
+    <div class="callout">三句話記住差異：<b>Walmart 靠物流把價格壓到最低；Costco 靠會員費，所以拚命給超值；Amazon 靠資料與平台，把每個環節都吃下來。</b></div>
+  `,
+  taiwan:`
+    <h4>台灣對應：模式都看得到</h4>
+    <ul>
+      <li><b>Walmart 式（低價＋量）：</b>台灣的家樂福量販、大潤發等以『一站購足、價格實惠』為訴求。</li>
+      <li><b>Costco 式（會員制）：</b>Costco Taiwan 本身在台灣極受歡迎，會員續約率高，常被當成會員經濟的最佳教材。</li>
+      <li><b>Amazon 式（平台＋物流）：</b>momo、PChome、蝦皮各自在『自營倉儲快速到貨』與『平台媒合』之間取捨，後面章節會深入比較。</li>
+    </ul>
+    <p>讓學生意識到：這三種國際模式，其實天天圍繞在台灣消費者身邊。</p>
+  `,
+  intl:`
+    <h4>國際比較表（概念性）</h4>
+    <div class="tblwrap"><table class="data">
+      <tr><th>面向</th><th>Walmart</th><th>Costco</th><th>Amazon</th></tr>
+      <tr><td>核心模式</td><td>天天低價＋物流</td><td>會員制＋精選大包裝</td><td>平台＋資料＋物流</td></tr>
+      <tr><td>主要獲利來源</td><td>商品銷售（薄利多銷）</td><td>會員年費</td><td>平台抽成、雲端、廣告、訂閱</td></tr>
+      <tr><td>商品種類數</td><td>非常多</td><td>精選（少而精）</td><td>幾乎無限（含第三方）</td></tr>
+      <tr><td>關鍵能力</td><td>供應鏈與成本控制</td><td>採購議價與會員經營</td><td>演算法、平台、物流自動化</td></tr>
+      <tr><td>對消費者的綁定</td><td>低價習慣</td><td>會員卡＋超值感</td><td>Prime 訂閱＋推薦</td></tr>
+    </table></div>
+    <p class="note-defer">表中為模式特徵的概念性整理，非即時財務數據；最新營收與展店數請於授課前補充。</p>
+  `,
+  discuss:[
+    "Costco『賣商品不太賺、靠會員費賺』的模式，最大的風險是什麼？如果會員大量不續約會怎樣？",
+    "Amazon 同時當『裁判（平台）』又當『球員（自營賣商品）』，這對第三方賣家公平嗎？可能引發什麼爭議？",
+    "如果你要在台灣開一家新通路，你會學 Walmart、Costco 還是 Amazon？為什麼？"
+  ],
+  lab:{
+    name:"Lab 4：三巨頭商業模式拆解卡",
+    goal:"用一張『商業模式拆解卡』分析 Walmart、Costco、Amazon 其中一家，找出它『靠什麼賺錢、靠什麼綁住顧客、最難被模仿的能力』。",
+    steps:[
+      "三人一組，每組抽一家公司（Walmart／Costco／Amazon）。",
+      "回答三個核心問題：①它主要靠什麼賺錢？②它用什麼方式綁住顧客？③它最難被對手模仿的能力是什麼？",
+      "找出這家公司在台灣『最像它』的對應業者，並說明哪裡像、哪裡不像。",
+      "把以上整理成一張一頁的『拆解卡』。",
+      "各組上台 2 分鐘快速報告，其他組可提一個挑戰問題。"
+    ],
+    deliverable:"一張一頁拆解卡（含三大核心問題的答案＋台灣對應業者比較）＋ 2 分鐘口頭報告。",
+    tools:"手機查資料、Google 簡報／Canva、可用 AI 工具協助整理商業模式重點（但需自行查證）。",
+    rubric:[
+      {c:"獲利邏輯正確（35%）",d:"是否抓對該公司真正的賺錢方式。"},
+      {c:"顧客綁定分析（25%）",d:"是否說明它如何留住顧客。"},
+      {c:"台灣對應（20%）",d:"對應業者是否合理並指出異同。"},
+      {c:"報告表達（20%）",d:"口頭報告是否清楚、能回應挑戰。"}
+    ],
+    discuss:[
+      "三家公司中，哪一家的模式最依賴『資料』？沒有資料它會垮嗎？",
+      "如果未來 AI 讓物流成本大降，對這三家誰最有利、誰最危險？"
+    ]
+  },
+  quiz:[
+    {q:"Costco 的主要利潤來源是？",
+     options:["商品高毛利","會員年費","廣告收入","停車費"],
+     answer:1, exp:"Costco 靠會員年費獲利，所以商品定價走超值路線，用『划算感』提高會員續約率。"},
+    {q:"Walmart 長期競爭力的基礎是？",
+     options:["最華麗的店面","強大的物流供應鏈與成本控制","最高的商品售價","只賣自有品牌"],
+     answer:1, exp:"Walmart 的 EDLP 天天低價，必須靠極致物流與規模化採購來支撐。"},
+    {q:"為什麼說 Amazon『同時是零售商、平台與物流公司』？",
+     options:["因為它只賣書","因為它自營進貨賣、也讓第三方上架、又自建物流配送","因為它不賣實體商品","因為它是一家銀行"],
+     answer:1, exp:"Amazon 自營零售、開放平台給第三方賣家、並自建 FBA 與配送，三種角色集於一身。"},
+    {q:"Amazon 的『飛輪效應』描述的是？",
+     options:["商品越來越貴的循環","更多賣家→更多選擇→更多買家→更多資料→更好推薦→更多買家的正向循環","員工越來越少","店面越開越多"],
+     answer:1, exp:"飛輪是一個自我增強的正向循環，每一環都讓下一環更強，是 Amazon 規模優勢的來源。"}
+  ],
+  extension:"課後任務：如果你是 Costco 的競爭對手，要設計一招『讓 Costco 會員不想續約』的策略，你會怎麼做？寫出 150 字策略，並評估它的可行性與風險。",
+  teacherNote:"學生常以為『大賣場都一樣』。本章關鍵在讓他們看出『同樣賣便宜，獲利邏輯可以完全不同』。Costco『靠會員費而非商品賺錢』是最反直覺、也最值得花時間講清楚的點。提醒：別讓學生把 Amazon 講成『只是網路商店』，要強調它平台＋物流＋資料的多重身分。涉及精確財報數字時，誠實標示需查證。",
+  reviewLine:"Walmart 靠物流壓低價、Costco 靠會員費給超值、Amazon 靠平台與資料整合一切。"
+});
+
+/* ---------- 第 5 章 ---------- */
+courseData.push({
+  id:5, tag:"國際案例", title:"國際流通業案例二：亞洲零售群像",
+  oneLine:"日本超商把『服務密度』做到極致、Uniqlo 用 SPA 自己掌控製造到零售、Alibaba／Shopee 用平台與資料統治東南亞，亞洲零售有自己的玩法。",
+  objectives:[
+    "能說明日本 7-Eleven 為何是『便利』的全球標竿。",
+    "能解釋 Uniqlo（Fast Retailing）的 SPA 模式如何整合製造與零售。",
+    "能比較 Alibaba／JD.com 與 Shopee／Lazada 的平台策略。",
+    "能說出亞洲零售與歐美巨頭在打法上的差異。"
+  ],
+  schedule:[
+    {t:"0–10 分鐘",d:"導入：問學生『日本便利商店和台灣比，多了哪些服務？』引出『便利＝服務密度』。"},
+    {t:"10–35 分鐘",d:"核心概念：日本超商服務化、Uniqlo SPA、阿里巴巴生態系、蝦皮東南亞平台戰。"},
+    {t:"35–60 分鐘",d:"案例：分組比較『日系細緻服務』vs『東南亞平台補貼戰』兩種成長路徑。"},
+    {t:"60–80 分鐘",d:"Lab：亞洲零售模式對照分析。"},
+    {t:"80–90 分鐘",d:"回顧、收成果，預告下一章（台灣便利商店體系）。"}
+  ],
+  concepts:`
+    <h4>日本 7-Eleven：把『便利』做成科學</h4>
+    <p>日本超商是全世界『便利程度』的標竿。它的厲害在於<b>密集的服務功能</b>與<b>精準的鮮食管理</b>：繳費、領錢、寄取貨、影印、票券、現做便當、甜點、咖啡，幾乎把生活機能濃縮進一家小店。日本 7-Eleven 以<b>單品管理（單一商品的細緻銷售追蹤）</b>與<b>多次配送</b>聞名，能依時段、天氣、在地需求精準補貨。台灣超商深受其影響。</p>
+    <h4>Uniqlo / Fast Retailing：SPA 模式</h4>
+    <p>Uniqlo 採用 <b>SPA（Speciality store retailer of Private label Apparel，自有品牌服飾專賣）</b>：<b>從設計、製造、物流到零售全部自己掌控</b>。傳統服飾是『品牌設計→工廠代工→批發→零售』層層分工；SPA 把這條鏈一手包辦，好處是：</p>
+    <ul>
+      <li>能快速反映銷售數據、調整生產（什麼好賣就追加）。</li>
+      <li>沒有層層中間商，成本與品質更可控。</li>
+      <li>能押注『基本款＋機能性（如發熱衣、輕羽絨）』大量生產、壓低成本。</li>
+    </ul>
+    <p>SPA 是『製造業與流通業融合』的代表，這正好呼應第 1 章：現代流通業的角色界線越來越模糊。</p>
+    <h4>Alibaba / JD.com：生態系 vs 自營物流</h4>
+    <ul>
+      <li><b>Alibaba（淘寶、天貓）：</b>以<b>平台＋支付（支付寶）＋物流網絡＋雲端</b>建立龐大生態系，主要當『撮合者』，自己不一定持有商品。</li>
+      <li><b>JD.com（京東）：</b>路線更像『中國版 Amazon』，強調<b>自營＋自建物流</b>，主打正品與快速到貨。</li>
+    </ul>
+    <p>兩者代表電商的兩條路：<b>輕資產平台</b> vs <b>重資產自營物流</b>。</p>
+    <h4>Shopee / Lazada：東南亞平台爭霸</h4>
+    <p>Shopee（蝦皮）與 Lazada 在東南亞與台灣靠<b>行動優先、社群化、補貼與遊戲化（簽到、coins、直播）</b>快速搶市。它們的成長策略常是『先用補貼換規模，再想辦法獲利』，這也帶出平台經濟的隱憂：燒錢補貼能撐多久？中小賣家被平台規則綁住的風險？（第 14 章會延伸討論。）</p>
+  `,
+  taiwan:`
+    <h4>台灣連結</h4>
+    <ul>
+      <li><b>日本超商→台灣超商：</b>台灣 7-ELEVEN、全家的鮮食、集點、多元服務，深受日系經營哲學影響，甚至青出於藍（台灣超商服務項目之多舉世聞名）。</li>
+      <li><b>Uniqlo 在台灣：</b>Uniqlo、GU 在台展店，發熱衣、機能服成為國民單品，是 SPA 模式在地落地的好例子。</li>
+      <li><b>Shopee 在台灣：</b>蝦皮已是台灣主要電商平台之一，其補貼、直播、免運策略深刻影響台灣消費習慣。</li>
+    </ul>
+  `,
+  intl:`
+    <h4>兩種成長路徑的對照</h4>
+    <div class="tblwrap"><table class="data">
+      <tr><th>面向</th><th>日系（7-Eleven／Uniqlo）</th><th>東南亞平台（Shopee／Lazada）</th></tr>
+      <tr><td>核心優勢</td><td>服務細緻、品質穩定、供應鏈精準</td><td>規模、補貼、社群與遊戲化</td></tr>
+      <tr><td>成長方式</td><td>長期深耕、單品管理、口碑</td><td>快速擴張、補貼換用戶、流量為王</td></tr>
+      <tr><td>主要挑戰</td><td>人力成本、成長趨緩</td><td>如何在補貼後轉為獲利</td></tr>
+    </table></div>
+    <p class="note-defer">為模式特徵的概念性整理，精確市占與財務數字請於授課前補充。</p>
+  `,
+  discuss:[
+    "台灣超商的服務項目（繳費、取貨、現做餐飲…）甚至比日本還多，這是優勢還是隱憂？對店員勞動條件有什麼影響？",
+    "Uniqlo 的 SPA 模式『自己做製造又自己做零售』，這和第 1 章說的『流通業角色界線模糊』有什麼關係？",
+    "Shopee 用補貼換規模，這種『先燒錢再獲利』的平台打法，對中小賣家是福還是禍？"
+  ],
+  lab:{
+    name:"Lab 5：亞洲零售模式對照分析",
+    goal:"從日本超商、Uniqlo、阿里系、蝦皮中任選兩家，分析它們各自『最強的一招』，並判斷這一招在台灣市場是否吃得開。",
+    steps:[
+      "選定兩家亞洲零售業者。",
+      "為每一家找出『一句話核心競爭力』（例如 Uniqlo＝SPA 自己掌控製造到零售）。",
+      "各舉一個它在台灣市場的真實現象作為證據。",
+      "判斷這套打法在台灣的『成功度』（高／中／低）並說明理由。",
+      "做成一張兩欄對照投影片。"
+    ],
+    deliverable:"一張兩家對照分析表（含核心競爭力、台灣證據、在台成功度判斷與理由）。",
+    tools:"手機查資料、官網與新聞、Google 簡報；可用 AI 整理重點後自行查證。",
+    rubric:[
+      {c:"核心競爭力（35%）",d:"是否準確抓出每家『最強的一招』。"},
+      {c:"在地證據（30%）",d:"是否舉出台灣市場真實現象。"},
+      {c:"判斷合理（25%）",d:"在台成功度判斷與理由是否站得住腳。"},
+      {c:"呈現（10%）",d:"投影片是否清楚易懂。"}
+    ],
+    discuss:[
+      "你選的兩家，誰比較依賴『資料與演算法』？誰比較依賴『實體服務與人力』？",
+      "如果這兩家在台灣正面對決，你賭誰贏？"
+    ]
+  },
+  quiz:[
+    {q:"Uniqlo 的 SPA 模式核心是？",
+     options:["只做設計不做製造","從設計、製造、物流到零售全部自己掌控","只當電商平台","只賣別人的品牌"],
+     answer:1, exp:"SPA 把設計、製造、物流、零售一手包辦，能快速依銷售數據調整生產、控制成本與品質。"},
+    {q:"日本 7-Eleven 最為人稱道的經營能力是？",
+     options:["店面最大","單品管理與精準多次配送","商品最便宜","只賣日本商品"],
+     answer:1, exp:"日本超商以單品管理與一天多次配送著稱，能依時段、天氣精準補貨，台灣超商深受影響。"},
+    {q:"Alibaba（淘寶／天貓）與 JD.com（京東）最大的路線差異是？",
+     options:["一個賣食物一個賣衣服","Alibaba 偏平台撮合，JD 偏自營＋自建物流","兩者完全相同","JD 不做電商"],
+     answer:1, exp:"Alibaba 走輕資產平台生態系，JD 走重資產自營與自建物流，是電商的兩條典型路線。"},
+    {q:"Shopee／Lazada 在東南亞快速成長最常用的策略是？",
+     options:["提高所有商品價格","補貼、免運、社群與遊戲化換取規模","只做線下店","禁止直播"],
+     answer:1, exp:"它們以行動優先、補貼免運、直播與遊戲化快速搶用戶，但也面臨『補貼後如何獲利』的挑戰。"}
+  ],
+  extension:"課後任務：找出『台灣超商比日本超商多出來的一項服務』，研究它為什麼在台灣行得通，寫成 150 字。思考：這項服務對店員是便利還是負擔？",
+  teacherNote:"本章容易變成『介紹一堆公司』的流水帳，建議用『兩種成長路徑（日系深耕 vs 東南亞補貼）』作為對照主軸，讓案例有結構。講 SPA 時務必回扣第 1 章『流通與製造界線模糊』，幫學生建立縱向連結。提醒：別把『中國電商模式』講得過於絕對，市場與政策變動快，最新狀況需查證。",
+  reviewLine:"亞洲零售有兩條路：日系靠服務與供應鏈深耕，東南亞平台靠補貼與社群搶規模。"
+});
+
+/* ---------- 第 6 章 ---------- */
+courseData.push({
+  id:6, tag:"台灣產業", title:"台灣便利商店體系",
+  oneLine:"台灣超商密度世界數一數二，7-ELEVEN、全家、萊爾富、OK 不只是賣東西，而是把『生活服務平台』塞進一家小店。",
+  objectives:[
+    "能說出台灣四大超商體系的定位與差異。",
+    "能解釋台灣超商為何能從『賣商品』擴張成『生活服務平台』。",
+    "能分析超商高密度展店背後的商圈與物流邏輯。",
+    "能評估超商服務不斷加碼對店員與加盟主的影響。"
+  ],
+  schedule:[
+    {t:"0–10 分鐘",d:"導入：請學生列出『上週在超商做過哪些事』（買咖啡、繳費、取貨、領錢、影印…），驚訝於清單之長。"},
+    {t:"10–35 分鐘",d:"核心概念：四大超商定位、生活服務平台化、鮮食與物流、集點與會員 App、加盟制度。"},
+    {t:"35–60 分鐘",d:"案例：比較 7-ELEVEN 與全家的差異化策略；討論『超商還能再加什麼服務』。"},
+    {t:"60–80 分鐘",d:"Lab：便利商店服務項目盤點。"},
+    {t:"80–90 分鐘",d:"回顧、收成果，預告下一章（超市、量販與會員制）。"}
+  ],
+  concepts:`
+    <h4>台灣超商：世界級的密度與機能</h4>
+    <p>台灣的便利商店密度是全球前段班，幾乎每個街角都有。但真正讓台灣超商特別的，不是『多』，而是<b>機能極度密集</b>：它把繳費、取貨寄件、領錢、影印列印、票券、現煮咖啡、現做鮮食、ATM、甚至代收代售全部塞進一家店。台灣超商早已不只是零售店，而是<b>社區的生活服務平台</b>。</p>
+    <h4>四大體系的定位</h4>
+    <ul>
+      <li><b>7-ELEVEN（統一超商）：</b>市場龍頭，店數最多、品牌力強，自有品牌（如 CITY CAFE、iseLect、OPEN!）與集點行銷做得最深。</li>
+      <li><b>全家 FamilyMart：</b>第二大，以<b>科技與會員 App、友善店、複合店型（與餐飲／藥妝結合）</b>做差異化，常被視為創新試驗者。</li>
+      <li><b>萊爾富 Hi-Life：</b>本土經營，常在區域市場、特定服務（如點數、票券）找縫隙切入。</li>
+      <li><b>OK 超商：</b>規模較小，靠特定區位與服務維持。</li>
+    </ul>
+    <h4>為什麼超商能變成『生活服務平台』？</h4>
+    <ul>
+      <li><b>高密度＋長工時：</b>24 小時、密集據點，等於一張覆蓋全台的服務網。</li>
+      <li><b>金流與物流節點：</b>能繳費、領錢、取貨，等於把『最後一哩』服務據點化。</li>
+      <li><b>鮮食差異化：</b>咖啡、便當、甜點是高毛利、能拉開差異的戰場，背後靠低溫多次配送支撐。</li>
+      <li><b>會員與點數：</b>App、集點、寄杯、優惠把消費者黏在生態系裡。</li>
+    </ul>
+    <h4>加盟制度：超商擴張的引擎</h4>
+    <p>超商能快速展店，靠的是<b>加盟（franchise）</b>：總部提供品牌、系統、商品、物流；加盟主出資金與人力經營單店。好處是擴張快、總部風險分散；但也帶來『加盟主工時長、利潤分配、24 小時人力』等爭議（第 14 章勞動議題會回扣）。</p>
+    <div class="callout">核心觀念：台灣超商的競爭，早已不是『誰商品便宜』，而是『誰的服務生態更黏、鮮食更強、會員經營更深』。</div>
+  `,
+  taiwan:`
+    <h4>台灣案例：7-ELEVEN vs 全家的差異化</h4>
+    <p><b>7-ELEVEN</b> 以龍頭規模與品牌（CITY CAFE「整個城市都是我的咖啡館」、OPEN! 家族 IP、集點公仔）建立情感連結與高來客。<b>全家</b>則常扮演<b>創新者</b>角色：較早大力推會員 App、寄杯、咖啡訂閱、友善食光（即期品折扣）、與餐飲品牌複合店等。兩強競爭，逼出台灣超商的高度創新。<span class="note-defer">各家最新店數、集點活動與新店型，教師可於授課前補充最新資料。</span></p>
+    <h4>台灣案例：超商即『最後一哩』樞紐</h4>
+    <p>網購店到店取貨、超商繳費、超商寄件、票券領取——超商成為電商與服務業的<b>實體據點網絡</b>。沒有這張密集的超商網，台灣電商的『店到店』物流不會這麼方便。這也說明：超商不只是零售，更是整個流通體系的關鍵節點。</p>
+  `,
+  intl:`
+    <h4>國際對照</h4>
+    <p>便利商店源自美國（7-Eleven 起源），但在<b>日本</b>被發揚光大（單品管理、鮮食、服務化），再傳到<b>台灣</b>後密度與服務項目甚至超越日本。相對地，許多歐美國家的便利商店機能單純得多（多半只是加油站附設小店）。台灣超商的『生活平台化』程度，是世界少見的在地特色。</p>
+  `,
+  discuss:[
+    "台灣超商服務項目越加越多（繳費、取貨、現煮、影印…），對『店員一個人要會的事』造成什麼壓力？這是進步還是過勞？",
+    "如果你是全家，要在『規模輸 7-ELEVEN』的情況下勝出，你會主打哪一招？",
+    "超商成為電商『最後一哩』樞紐，這對傳統宅配與郵局是威脅還是合作機會？"
+  ],
+  lab:{
+    name:"Lab 6：便利商店服務項目盤點",
+    goal:"實地走訪一家超商（或查官網／App），盤點它提供的所有服務，分類成『買商品／生活服務／金流物流／會員行銷』四大類，並評估哪些是高黏著度服務。",
+    steps:[
+      "選定一家超商品牌與一家門市。",
+      "列出你能找到的所有服務項目（商品以外的也要列）。",
+      "把每項服務歸到四大類：①買商品 ②生活服務（繳費、影印…）③金流物流（取貨、寄件、領錢）④會員行銷（集點、App、寄杯）。",
+      "為每項服務標註『黏著度高／中／低』（會讓你常回來的＝高）。",
+      "找出 1 項『其他超商有、但這家沒有』的服務，當作改進建議。"
+    ],
+    deliverable:"一張四大類服務盤點表（含黏著度標註）＋ 1 項改進建議。",
+    tools:"手機、超商官方 App、實地走訪或官網；可用試算表整理。",
+    rubric:[
+      {c:"盤點完整（35%）",d:"是否找出夠多、含非商品的服務。"},
+      {c:"分類正確（25%）",d:"四大類歸類是否合理。"},
+      {c:"黏著度判斷（25%）",d:"高黏著服務的判斷是否有道理。"},
+      {c:"改進建議（15%）",d:"建議是否具體可行。"}
+    ],
+    discuss:[
+      "你盤點到的服務裡，哪些其實是『幫別的產業做最後一哩』（如電商取貨、政府繳費）？超商從中得到什麼？",
+      "如果要砍掉一項服務以減輕店員負擔，你會砍哪一項？為什麼很難砍？"
+    ]
+  },
+  quiz:[
+    {q:"台灣便利商店最特別的地方，主要是？",
+     options:["商品最便宜","機能極度密集，成為社區的生活服務平台","只賣飲料","不接受電子支付"],
+     answer:1, exp:"台灣超商把繳費、取貨、金流、鮮食、會員等高度整合，已是生活服務平台，而不只是零售店。"},
+    {q:"超商能快速展店，主要靠哪一種制度？",
+     options:["直營一條龍","加盟（franchise）","政府補助","會員集資"],
+     answer:1, exp:"加盟讓總部提供品牌系統物流、加盟主出資與人力，擴張快、風險分散，但也帶來工時與利潤分配爭議。"},
+    {q:"下列哪一項最能說明『超商是流通體系的關鍵節點』？",
+     options:["超商只賣自家商品","超商是電商店到店取貨、繳費、寄件的實體據點網絡","超商不提供任何金流服務","超商與物流完全無關"],
+     answer:1, exp:"密集的超商網成為電商與服務業的『最後一哩』據點，是整個流通體系的樞紐。"},
+    {q:"全家相對 7-ELEVEN 常扮演的角色比較接近？",
+     options:["完全模仿龍頭","在會員 App、寄杯、複合店型等面向做創新差異化","只做批發","退出便利商店市場"],
+     answer:1, exp:"在規模較小的情況下，全家常以科技、會員經營與新店型做差異化，被視為創新試驗者。"}
+  ],
+  extension:"課後任務：記錄你『連續三天』使用便利商店的所有行為（買了什麼、用了什麼服務、花多少時間），分析自己對超商的依賴程度，寫成 150 字反思。",
+  teacherNote:"本章學生最有共鳴，可大量用他們自身經驗帶入。重點是把『便利商店』從『賣東西的店』升級理解為『生活服務平台與流通節點』。務必帶到加盟制度與店員勞動議題，為第 14 章鋪路，但本章點到即可、不需深論。提醒學生 Lab 走訪時尊重店員與他人隱私，勿干擾營業、勿拍攝他人。各家最新數據需查證。",
+  reviewLine:"台灣超商以高密度與密集服務，從零售店進化成社區生活服務平台與流通樞紐。"
+});
+
+/* ---------- 第 7 章 ---------- */
+courseData.push({
+  id:7, tag:"台灣產業", title:"台灣超市、量販與會員制通路",
+  oneLine:"全聯靠『密集據點＋實在價格』、家樂福靠『一站購足量販』、Costco 靠『會員精選』，三種模式服務不同的採買需求。",
+  objectives:[
+    "能分辨超市、量販店、會員制賣場三種業態的差異。",
+    "能說明全聯如何從『軍公教福利中心』長成全台最大超市。",
+    "能比較家樂福（量販＋超市＋便利店多元布局）與 Costco（會員精選）的策略。",
+    "能用『購買情境』判斷消費者何時會選哪一種通路。"
+  ],
+  schedule:[
+    {t:"0–10 分鐘",d:"導入：問學生『家裡採買，什麼情況去全聯？什麼情況去好市多？』引出業態與情境的對應。"},
+    {t:"10–35 分鐘",d:"核心概念：超市 vs 量販 vs 會員制差異；全聯、家樂福、Costco Taiwan 策略拆解。"},
+    {t:"35–60 分鐘",d:"案例：三種通路的『一籃商品價格與份量』比較；分組討論各自的目標客群。"},
+    {t:"60–80 分鐘",d:"Lab：三通路商品價格與份量比較。"},
+    {t:"80–90 分鐘",d:"回顧、收成果，預告下一章（電商與平台流通）。"}
+  ],
+  concepts:`
+    <h4>三種業態，先分清楚</h4>
+    <ul>
+      <li><b>超市（supermarket）：</b>以生鮮與日常食品為主，店型中型、貼近社區、採買頻率高。代表：全聯、頂好（已整併）、各區域超市。</li>
+      <li><b>量販店／大賣場（hypermarket）：</b>店型大、品項廣（食品＋家電＋日用＋生活百貨），主打『一站購足、量大實惠』，常設停車場。代表：家樂福、大潤發、愛買。</li>
+      <li><b>會員制倉儲賣場（warehouse club）：</b>需付會員費、商品精選大包裝、倉儲式陳列。代表：Costco、大潤發旗下會員店等。</li>
+    </ul>
+    <h4>全聯：從福利中心到超市王</h4>
+    <p>全聯的故事是台灣流通業經典案例。它前身是<b>軍公教福利中心</b>，以『實在價格、不花俏』起家，靠<b>密集展店、壓低營運成本、貼近社區</b>長成全台最大超市。全聯的策略重點：</p>
+    <ul>
+      <li><b>密度取勝：</b>據點多到『下樓就有』，主打日常生鮮採買。</li>
+      <li><b>成本控制＋實在感：</b>裝潢樸實、訴求『買菜省錢』的庶民形象，但近年也升級店型、做生鮮與咖啡、推 PX Pay 與會員。</li>
+      <li><b>自有物流與生鮮供應鏈：</b>越大越能壓低進貨成本、穩定生鮮供應。</li>
+    </ul>
+    <h4>家樂福：多元店型布局</h4>
+    <p>家樂福（Carrefour）在台以<b>量販大賣場</b>起家，後來布局<b>超市與便利型店（多店型策略）</b>，想用『大店補足購、小店補日常』覆蓋更多消費情境。它面對的挑戰是：量販店受電商與超商夾擊，必須靠生鮮、自有品牌與會員經營守住客流。<span class="note-defer">家樂福在台股權與經營近年有變動，最新狀況請於授課前查證補充。</span></p>
+    <h4>Costco Taiwan：會員精選的代表</h4>
+    <p>Costco 在台灣極受歡迎，把第 4 章講的『會員費＋精選大包裝＋尋寶式陳列＋Kirkland 自有品牌』完整落地。台灣消費者的高續約率，讓 Costco 成為『會員經濟』最好的本土教材。它服務的是『大量採買、追求超值、享受尋寶樂趣』的客群。</p>
+    <div class="callout">用『情境』記憶：今天缺醬油牛奶 → 全聯（近、快、日常）；月採買＋買家電 → 家樂福（廣、一站購足）；囤貨＋家庭聚會＋尋寶 → Costco（量大、超值、會員）。</div>
+  `,
+  taiwan:`
+    <h4>台灣案例：業態界線正在模糊</h4>
+    <p>近年台灣通路界線越來越模糊：全聯併入部分超市、跨足生鮮咖啡與支付；家樂福發展多店型；超商也賣起生鮮蔬果與大包裝。大家都想『搶走彼此的購物籃』。這呼應全課主軸：<b>流通業者不斷往上下游與隔壁業態擴張</b>。</p>
+    <h4>台灣案例：自有品牌（PB）成為勝負手</h4>
+    <p>全聯『美味堂／We Sweet』、家樂福自有品牌、Costco『Kirkland』——<b>自有品牌（Private Brand）</b>讓通路能拉高毛利、做出差異、綁住顧客。自有品牌會在第 10、11 章再深入。</p>
+  `,
+  intl:`
+    <h4>國際對照</h4>
+    <p>超市（如美國 Kroger）、量販（如 Walmart Supercenter、法國 Carrefour）、會員制（如 Costco、Sam's Club）這三種業態在全球都存在，差別在<b>店型大小、商品廣度、是否收會員費</b>。台灣的特殊之處是<b>超商密度太高</b>，壓縮了部分超市與量販的『順手買』需求，逼得超市量販必須更強調生鮮、份量與會員價值。</p>
+  `,
+  discuss:[
+    "在超商密度世界第一的台灣，超市與量販店要如何避免被超商『順手買』的便利性蠶食？",
+    "全聯從『樸實庶民』形象，近年走向升級店型與咖啡、支付，這個轉型有沒有風險？會不會失去原本的客群？",
+    "Costco 的會員制在台灣這麼成功，為什麼其他量販店很難照抄這套模式？"
+  ],
+  lab:{
+    name:"Lab 7：三通路商品價格與份量比較",
+    goal:"選定 3～5 樣常見商品（如雞蛋、牛奶、衛生紙、零食），到超市、量販、會員制（或用官網／App）比較它們的『單位價格』與『最小購買份量』，找出各通路的優勢。",
+    steps:[
+      "選定 3～5 樣可跨通路比較的商品。",
+      "分別在超市（如全聯）、量販（如家樂福）、會員制（如 Costco）查到該商品的售價與份量。",
+      "把『總價』換算成『單位價格』（每 100g、每顆、每張）才能公平比較。",
+      "做成比較表，標出每樣商品『單位最便宜』與『份量最大』的通路。",
+      "歸納：什麼樣的購買情境適合哪個通路。"
+    ],
+    deliverable:"一張含『單位價格換算』的三通路比較表＋一段『情境建議』（什麼情況買哪裡）。",
+    tools:"手機、各通路官網／App、計算機或試算表（做單位換算）。注意：以官方標示為準，勿臆測。",
+    rubric:[
+      {c:"單位換算正確（35%）",d:"是否正確換算成可比較的單位價格。"},
+      {c:"資料真實（30%）",d:"價格份量是否來自真實標示而非猜測。"},
+      {c:"情境歸納（25%）",d:"是否能依購買情境給出合理建議。"},
+      {c:"表格清楚（10%）",d:"比較表是否一目了然。"}
+    ],
+    discuss:[
+      "『單位價格最便宜』就一定划算嗎？對一個人住的學生來說，份量太大會發生什麼問題？",
+      "會員制的『會員費』要分攤進成本，你一年要買多少才划算？"
+    ]
+  },
+  quiz:[
+    {q:"量販店（大賣場）相較於超市，最主要的特色是？",
+     options:["只賣生鮮","店型大、品項廣、主打一站購足與量大實惠","需要付會員費才能進入","只在網路上營業"],
+     answer:1, exp:"量販店店大、品項廣（食品＋家電＋日用），訴求一站購足；超市則中型、貼近社區、以生鮮日常為主。"},
+    {q:"全聯能成為全台最大超市，最關鍵的策略是？",
+     options:["賣最貴的精品","密集展店＋成本控制＋貼近社區的實在價格","只做網路電商","只收會員費"],
+     answer:1, exp:"全聯靠密度、低營運成本與庶民實在感起家，近年再升級店型與支付會員。"},
+    {q:"Costco 服務的核心客群比較接近？",
+     options:["只想買一瓶飲料的人","追求大量採買、超值與尋寶樂趣的家庭客","只買單一商品的人","完全不在意價格的人"],
+     answer:1, exp:"Costco 的會員制＋大包裝＋尋寶式陳列，最適合大量採買、重視超值的家庭客群。"},
+    {q:"『自有品牌（Private Brand）』對通路的主要好處是？",
+     options:["增加中間商","拉高毛利、做出差異化並綁住顧客","讓商品變貴又難賣","與物流無關"],
+     answer:1, exp:"自有品牌讓通路掌握定價與品質、提高毛利並建立差異，是通路重要的競爭武器。"}
+  ],
+  extension:"課後任務：訪問家中主要採買者，問他們『家裡的採買通常怎麼分配在不同通路』，畫成一張『我家的採買地圖』，標出各通路負責買什麼，並說明背後的考量。",
+  teacherNote:"學生常把超市、量販、會員制混為一談，本章首要任務是把三者『業態定義』講清楚。全聯的『福利中心起家』故事很能吸引學生，是很好的本土案例。Lab 的重點在『單位價格換算』——很多學生會直接比總價，要提醒他們換算才公平。涉及家樂福股權與各家最新數據時，誠實標示需查證。",
+  reviewLine:"超市、量販、會員制服務不同採買情境；全聯靠密度、家樂福靠一站購足、Costco 靠會員精選。"
+});
+
+/* ---------- 第 8 章 ---------- */
+courseData.push({
+  id:8, tag:"台灣產業", title:"台灣電子商務與平台流通",
+  oneLine:"momo 靠自營快速到貨、PChome 老牌轉型、蝦皮靠平台社群與補貼，再加上外送與即時零售，台灣的『線上通路』戰況激烈。",
+  objectives:[
+    "能分辨『自營型電商』與『平台型電商』的差異。",
+    "能比較 momo、PChome、蝦皮的策略定位。",
+    "能說明外送平台與即時零售如何改寫『最後一哩』。",
+    "能描述台灣消費者線上購物的多元旅程。"
+  ],
+  schedule:[
+    {t:"0–10 分鐘",d:"導入：問學生『買 3C 你去哪、買便宜小物去哪、急著要外送去哪』，呈現平台選擇的差異。"},
+    {t:"10–35 分鐘",d:"核心概念：自營 vs 平台、快速到貨物流戰、外送與即時零售、直播與社群電商。"},
+    {t:"35–60 分鐘",d:"案例：momo／PChome／蝦皮三方比較；討論外送平台對實體餐飲與零售的衝擊。"},
+    {t:"60–80 分鐘",d:"Lab：電商平台頁面分析。"},
+    {t:"80–90 分鐘",d:"回顧、收成果，預告下一章（門市營運與選址）。"}
+  ],
+  concepts:`
+    <h4>兩種電商基因：自營 vs 平台</h4>
+    <ul>
+      <li><b>自營型電商（B2C）：</b>平台自己進貨、自建倉儲與物流、自己出貨。優點是<b>品質與到貨速度可控</b>，缺點是<b>重資產、要囤貨</b>。代表：momo、PChome 24h。</li>
+      <li><b>平台型電商（C2C／市集）：</b>自己不一定持有商品，<b>媒合眾多賣家與買家</b>，靠抽成、廣告、金流獲利。優點是<b>輕資產、商品海量</b>，缺點是<b>品質與賣家良莠不齊</b>。代表：蝦皮（兼具 B2C 與 C2C）。</li>
+    </ul>
+    <h4>台灣三強的定位</h4>
+    <ul>
+      <li><b>momo：</b>近年成長強勁，靠<b>自營＋密集衛星倉＋快速到貨（隔日／當日）</b>與行動 App 體驗取勝，主打『快、便宜、好買』。</li>
+      <li><b>PChome：</b>台灣老牌電商，以<b>24h 到貨</b>聞名一時，面對 momo 與蝦皮夾擊，持續轉型與調整物流策略。</li>
+      <li><b>蝦皮（Shopee）：</b>以<b>行動優先、社群化、免運補貼、直播、遊戲化</b>快速搶下大量用戶與賣家，把『逛、聊、玩、買』結合在一起。</li>
+    </ul>
+    <h4>物流是電商的勝負手</h4>
+    <p>電商比的不只是價格，更是<b>到貨速度與取貨方便性</b>。台灣電商善用<b>超商店到店</b>（取貨付款）與<b>密集衛星倉</b>縮短最後一哩。誰能更快、更便宜、更彈性地把商品送到消費者手上，誰就有優勢。這也是為什麼 momo 拼命布建衛星倉。</p>
+    <h4>外送平台與即時零售</h4>
+    <p><b>外送平台</b>（Uber Eats、foodpanda）本來送餐，現在也送<b>超市、藥妝、超商商品</b>，發展成<b>即時零售（quick commerce）</b>：你不必出門，30 分鐘內把生活用品送到家。它把『便利商店的即時性』搬上線，也對實體店與傳統宅配形成新競爭。<span class="note-defer">外送與即時零售業者的市場版圖變動快，最新狀況請於授課前補充。</span></p>
+    <h4>直播與社群電商</h4>
+    <p><b>直播電商</b>（在直播中喊單、限時優惠）與<b>社群電商</b>（透過社群、團購、KOL 帶貨）讓『內容＋互動＋衝動購買』結合。它特別適合服飾、美妝、生鮮團購，是台灣電商的重要支流（第 13 章談 AI 導購時會再延伸）。</p>
+  `,
+  taiwan:`
+    <h4>台灣案例：多元並存的線上旅程</h4>
+    <p>台灣消費者的線上購物旅程非常多元：買 3C 家電可能上 momo／PChome 比價、買平價小物與服飾逛蝦皮、急需生活用品叫外送即時零售、跟著喜歡的賣家看直播搶團購。<b>同一個消費者會在不同情境用不同平台</b>，這正是平台流通的特色。</p>
+    <h4>台灣案例：超商店到店——電商的隱形基礎</h4>
+    <p>台灣電商能蓬勃發展，超商的<b>店到店取貨</b>功不可沒：消費者下班順路取貨、貨到付款降低不信任。這再次證明第 6 章的重點——<b>超商是整個流通體系的關鍵節點</b>，線上線下其實緊密相扣。</p>
+  `,
+  intl:`
+    <h4>國際對照</h4>
+    <p>自營 vs 平台的分野在全球都成立：<b>Amazon、京東</b>偏自營＋自建物流（重資產），<b>阿里巴巴淘寶、Shopee</b>偏平台撮合（輕資產）。即時零售（quick commerce）也是全球趨勢，從生鮮外送到 15 分鐘到貨的暗倉（dark store）模式，各國都在實驗。台灣的特色是<b>超商網絡讓最後一哩特別便宜方便</b>，這是不少國家羨慕的條件。</p>
+  `,
+  discuss:[
+    "同樣是電商，momo（自營快送）和蝦皮（平台社群）你比較常用哪個、買什麼東西用哪個？背後反映了什麼不同需求？",
+    "外送平台從『送餐』擴張到『送一切（即時零售）』，這對便利商店是威脅還是新的合作機會？",
+    "直播電商的『限時、喊單、衝動購買』很會帶貨，但對消費者理性決策可能造成什麼影響？（先想想，第 14 章會深入。）"
+  ],
+  lab:{
+    name:"Lab 8：電商平台頁面分析",
+    goal:"挑同一件商品，在兩個電商平台（如 momo 與蝦皮）搜尋，分析兩個平台的『商品頁設計、價格呈現、評價系統、推薦與促銷手法』有何不同。",
+    steps:[
+      "選定一件具體商品（型號要相同才公平，例如某款行動電源）。",
+      "分別在兩個平台搜尋該商品。",
+      "比較兩平台的：①搜尋結果排序 ②價格與運費呈現 ③商品評價與星等 ④平台如何推薦其他商品 ⑤促銷手法（折價券、限時、免運門檻）。",
+      "截圖標註關鍵差異（注意避開他人個資）。",
+      "歸納：哪個平台『讓你更想買』？它用了哪些手法？"
+    ],
+    deliverable:"一份兩平台對照分析（5 個比較面向）＋ 一段『哪個平台更會促使下單、用了什麼手法』的結論。",
+    tools:"手機或電腦、兩個電商平台 App／網站、截圖工具。",
+    rubric:[
+      {c:"面向完整（30%）",d:"是否涵蓋排序、價格、評價、推薦、促銷等面向。"},
+      {c:"觀察具體（30%）",d:"是否舉出真實畫面與具體差異。"},
+      {c:"手法辨識（25%）",d:"是否看出平台促使下單的設計手法。"},
+      {c:"反思（15%）",d:"是否反思這些手法對自己決策的影響。"}
+    ],
+    discuss:[
+      "你發現的促銷手法中，哪些是『真的省到』，哪些是『讓你覺得省到、其實買更多』？",
+      "商品評價對你的決策影響有多大？如果評價有可能造假，你會怎麼判斷？（連結第 13、14 章假評論主題。）"
+    ]
+  },
+  quiz:[
+    {q:"『自營型電商』與『平台型電商』最關鍵的差別是？",
+     options:["一個賣食物一個賣衣服","自營自己進貨自建物流、平台則媒合眾多賣家","自營比較貴、平台一定比較便宜","兩者完全相同"],
+     answer:1, exp:"自營型自己進貨、囤貨、出貨（重資產、品質可控）；平台型媒合賣家買家（輕資產、商品海量）。"},
+    {q:"momo 近年的核心競爭力主要來自？",
+     options:["只賣高價精品","自營＋密集衛星倉＋快速到貨","完全不做物流","只做直播"],
+     answer:1, exp:"momo 以自營與密集衛星倉達成快速到貨，加上行動 App 體驗，主打快、便宜、好買。"},
+    {q:"外送平台從送餐擴張到送超市、藥妝商品，發展成？",
+     options:["傳統批發","即時零售（quick commerce）","百貨公司","會員制賣場"],
+     answer:1, exp:"即時零售讓消費者在短時間內收到生活用品，把便利商店的即時性搬上線。"},
+    {q:"台灣電商能蓬勃發展，下列哪個『實體基礎』功不可沒？",
+     options:["百貨公司週年慶","超商店到店取貨與貨到付款","傳統市場","夜市"],
+     answer:1, exp:"密集的超商店到店取貨與貨到付款，大幅降低最後一哩成本與消費者不信任，是台灣電商的隱形基礎。"}
+  ],
+  extension:"課後任務：記錄你『過去一個月的線上消費』，標出每筆用了哪個平台、為什麼選它、怎麼取貨。分析你自己是『價格導向、速度導向，還是逛街導向』的消費者，寫成 150 字。",
+  teacherNote:"本章與學生生活高度重疊，互動會很熱烈。重點是把『自營 vs 平台』的基因差異講清楚，避免學生把所有電商當成一樣。外送即時零售與直播電商變化極快，務必提醒『市占與排名需查證、勿引用過時數字』。Lab 比較商品時要提醒學生『選同型號才公平』。本章可預先點出『評價可能造假』，為第 13、14 章假評論主題埋伏筆。",
+  reviewLine:"台灣線上通路分自營（momo）與平台（蝦皮）兩種基因，外送即時零售改寫最後一哩。"
+});
+
+/* ---------- 第 9 章 ---------- */
+courseData.push({
+  id:9, tag:"核心管理", title:"門市營運與選址管理",
+  oneLine:"一家店賺不賺錢，常在『開店那一刻』就決定一半——選址、商圈、動線、坪效、陳列與服務流程，是門市經營的硬功夫。",
+  objectives:[
+    "能說明『商圈』的概念與選址的關鍵考量。",
+    "能解釋『坪效』如何衡量一家店的經營效率。",
+    "能分析店內動線與商品陳列如何影響購買行為。",
+    "能描述標準化的門市服務流程與其重要性。"
+  ],
+  schedule:[
+    {t:"0–10 分鐘",d:"導入：給兩個店址（轉角 vs 巷子內），問學生『哪個會比較賺？為什麼？』引出選址的重要。"},
+    {t:"10–35 分鐘",d:"核心概念：商圈與選址、坪效、動線與陳列心理學、服務流程標準化（SOP）。"},
+    {t:"35–60 分鐘",d:"案例：分析一家超商／超市的動線與陳列；討論『黃金陳列位放什麼最賺』。"},
+    {t:"60–80 分鐘",d:"Lab：商圈觀察＋門市陳列分析。"},
+    {t:"80–90 分鐘",d:"回顧、收成果，預告下一章（商品、庫存與物流）。"}
+  ],
+  concepts:`
+    <h4>商圈與選址：開店的第一道決策</h4>
+    <p><b>商圈（trade area）</b>是一家店主要客源來自的地理範圍。選址要評估：</p>
+    <ul>
+      <li><b>人流量：</b>多少人會經過？是過路客還是會進來的客？</li>
+      <li><b>客群屬性：</b>住宅區（晚上熱）、商辦區（中午熱）、學區（學生）、車站（過路）。</li>
+      <li><b>可見性與可及性：</b>看不看得到、好不好進來、有沒有停車。</li>
+      <li><b>競爭與互補：</b>旁邊有沒有同業搶客，或有沒有能帶人流的鄰居（如美食街旁）。</li>
+      <li><b>租金與成本：</b>好地點租金貴，要算回不回得來。</li>
+    </ul>
+    <div class="callout">選址常被說成『location, location, location』——位置幾乎決定一家店的天花板。選錯址，再厲害的店長也難救。</div>
+    <h4>坪效：衡量店的效率</h4>
+    <p><b>坪效</b>＝每坪面積創造的營業額（營業額 ÷ 店坪數）。它衡量『空間有沒有被好好利用』。坪效高代表用更小空間賺更多錢。超商坪數小卻坪效高，靠的是<b>高週轉、高毛利鮮食、密集補貨</b>。提升坪效的方法：放對商品、用好黃金位、加快週轉、減少滯銷佔位。</p>
+    <h4>動線與陳列：讓你不知不覺多買</h4>
+    <p>店內<b>動線（顧客行走路線）</b>與<b>陳列</b>是一門行為心理學：</p>
+    <ul>
+      <li><b>入口與右轉習慣：</b>多數人進店傾向右轉，入口右側是黃金區。</li>
+      <li><b>黃金陳列高度：</b>與視線、伸手同高（約胸到眼）的層架最好賣，常放高毛利或主打商品。</li>
+      <li><b>必需品放最裡面：</b>把牛奶、麵包等常買品放深處，讓你『一路逛過去』經過更多商品。</li>
+      <li><b>結帳區的衝動購買：</b>口香糖、電池、小物放在排隊動線，趁等待時順手帶。</li>
+      <li><b>端架（貨架兩端）：</b>是促銷與新品的高曝光位。</li>
+    </ul>
+    <h4>服務流程標準化（SOP）</h4>
+    <p>連鎖店要『每一家都一樣好』，靠的是<b>標準作業流程（SOP）</b>：問候、結帳、補貨、清潔、鮮食製備、客訴處理都有標準。SOP 讓品質穩定、訓練快速、體驗一致。但過度僵化的 SOP 也可能讓服務變得制式、缺乏人情味——這是經營者要拿捏的平衡。</p>
+  `,
+  taiwan:`
+    <h4>台灣案例：超商的選址科學</h4>
+    <p>台灣超商展店高度依賴<b>商圈分析與人流數據</b>：同一條街可能有兩家同品牌（為了卡位、攔截人流），轉角店通常優於巷內店。超商也會依商圈調整商品結構——學區店多零食飲料、商辦店多午餐咖啡、住宅店多生鮮日用。這就是『同品牌、不同店、不同貨』。</p>
+    <h4>台灣案例：陳列就在你身邊</h4>
+    <p>下次進超商，注意收銀台旁的口香糖與小物、門口端架的促銷品、與視線同高的高毛利飲料——這些位置都是精心設計的。全聯近年也強化生鮮動線與烘焙、咖啡，引導顧客在店內停留更久、買更多。</p>
+  `,
+  intl:`
+    <h4>國際對照</h4>
+    <p>選址與陳列是全球零售共通的硬功夫。<b>IKEA</b> 用『單一動線（強迫繞完全場）』讓你看完所有商品；<b>Costco</b> 用倉儲式尋寶陳列＋把熱賣品放深處製造『邊逛邊撿』；超市把生鮮（吸客）放外圈、加工食品放內圈。這些設計背後都是同一個目的：<b>延長停留、增加觸及、提高客單價</b>。</p>
+  `,
+  discuss:[
+    "同一條街上出現兩家同品牌超商，看似自己打自己，為什麼業者還要這樣開？（提示：卡位與攔截人流。）",
+    "便利商店把牛奶、御飯糰放在最裡面，這個設計對消費者是貼心還是套路？你怎麼看？",
+    "SOP 讓服務穩定，但也可能變得制式。你遇過哪些『太 SOP 而沒人情味』的服務經驗？該怎麼改善？"
+  ],
+  lab:{
+    name:"Lab 9：商圈觀察＋門市陳列分析",
+    goal:"選一家門市，先分析它的商圈（誰會來、什麼時段熱），再進店畫出動線與陳列重點，找出它『引導你多買』的 3 個設計。",
+    steps:[
+      "選定一家門市（超商或超市），記錄它的位置類型（住宅／商辦／學區／車站等）。",
+      "觀察並推估它的主要客群與尖峰時段。",
+      "進店畫一張簡單平面動線圖（入口、主走道、結帳區、冷藏區）。",
+      "找出 3 個『陳列設計引導購買』的證據（黃金陳列、端架、結帳區小物、必需品放深處等）。",
+      "評估它的『坪效友善度』：空間有沒有浪費？滯銷區在哪？",
+      "提出 1 個你會調整的陳列建議。"
+    ],
+    deliverable:"一份門市分析（商圈描述＋動線圖＋3 個陳列設計觀察＋1 個改進建議）。",
+    tools:"手機（拍環境，勿拍他人）、紙筆畫動線、Google Maps 看周邊。注意尊重門市營業與他人隱私。",
+    rubric:[
+      {c:"商圈分析（25%）",d:"是否合理判讀位置類型、客群與時段。"},
+      {c:"動線圖（25%）",d:"動線圖是否清楚反映實際空間。"},
+      {c:"陳列觀察（30%）",d:"是否找出真實且有道理的陳列設計。"},
+      {c:"改進建議（20%）",d:"建議是否具體可行。"}
+    ],
+    discuss:[
+      "你觀察的店，最賺錢的『黃金位置』放的是什麼商品？換成你會放什麼？",
+      "如果這家店要再提升坪效，你會先動哪一塊空間？"
+    ]
+  },
+  quiz:[
+    {q:"『坪效』指的是？",
+     options:["店的總坪數","每坪面積創造的營業額","員工人數","商品總數"],
+     answer:1, exp:"坪效＝營業額 ÷ 坪數，衡量空間利用效率。超商坪數小卻坪效高，靠高週轉與高毛利鮮食。"},
+    {q:"為什麼超市常把牛奶、麵包等必需品放在店的最裡面？",
+     options:["因為裡面比較涼","為了讓顧客一路逛過去、經過更多商品、增加購買","因為前面沒空間","為了防盜"],
+     answer:1, exp:"把必買品放深處能延長動線、增加商品觸及，是提高客單價的常見陳列策略。"},
+    {q:"門市的『黃金陳列高度』通常是指？",
+     options:["最高的層架","與顧客視線、伸手同高（約胸到眼）的層架","地板上","天花板"],
+     answer:1, exp:"與視線伸手同高的層架最好拿、最好賣，常放高毛利或主打商品。"},
+    {q:"連鎖店推行 SOP（標準作業流程）的主要目的是？",
+     options:["讓服務更有人情味","讓每家店品質穩定一致、訓練快速、體驗一致","減少商品種類","提高租金"],
+     answer:1, exp:"SOP 確保連鎖品質一致與快速複製，但過度僵化可能讓服務變制式，需要拿捏平衡。"}
+  ],
+  extension:"課後任務：找兩家『位置一好一壞』的同類型店（例如轉角 vs 巷內的飲料店），觀察它們的生意差異，分析位置之外還有哪些因素影響成敗，寫成 150 字。",
+  teacherNote:"本章很適合『走出教室』，Lab 體驗感強。講陳列心理學時學生會很驚訝『原來都是套路』，可藉此帶到第 14 章『過度誘導消費』的倫理討論，但本章先保持中性、聚焦經營技巧即可。提醒學生：選址沒有單一萬靈公式，人流、客群、租金要綜合判斷。Lab 走訪務必強調尊重門市與他人隱私、不干擾營業。",
+  reviewLine:"門市經營靠選址、商圈、坪效、動線陳列與服務 SOP；位置幾乎決定一家店的上限。"
+});
+
+/* ===== 第 10 章 ===== */
+courseData.push({
+  id:10, tag:"核心管理", title:"商品、庫存與物流管理",
+  oneLine:"流通業真正的戰場在『看不見的後台』——進什麼貨、放多少庫存、怎麼配送，決定一家店會缺貨還是滯銷、會賺錢還是壓死現金。",
+  objectives:[
+    "能說明商品組合（product assortment）與商品分類的基本邏輯。",
+    "能解釋缺貨與滯銷的成本，以及庫存管理要平衡什麼。",
+    "能描述配送中心（DC）與冷鏈在流通中的角色。",
+    "能說明補貨機制（如自動補貨、JIT）如何運作。"
+  ],
+  schedule:[
+    {t:"0–10 分鐘",d:"導入：問『超商的便當為什麼幾乎不會大缺、也很少看到一堆過期？』引出庫存與補貨。"},
+    {t:"10–35 分鐘",d:"核心概念：商品組合、缺貨 vs 滯銷、庫存週轉、配送中心與冷鏈、補貨機制。"},
+    {t:"35–60 分鐘",d:"案例：超商鮮食的多次配送與報廢管理；量販的大量集中配送。"},
+    {t:"60–80 分鐘",d:"Lab：庫存補貨情境模擬。"},
+    {t:"80–90 分鐘",d:"回顧、收成果，預告下一章（會員、促銷與消費者資料）。"}
+  ],
+  concepts:`
+    <h4>商品組合：店裡放什麼、放多少種</h4>
+    <p><b>商品組合（assortment）</b>是一家店『賣哪些商品』的整體規劃，包含兩個面向：</p>
+    <ul>
+      <li><b>商品廣度：</b>有多少大類（飲料、零食、日用、鮮食…）。</li>
+      <li><b>商品深度：</b>同一類有多少選擇（同樣是礦泉水，放幾個品牌幾種容量）。</li>
+    </ul>
+    <p>超商走『廣而淺』（什麼都有一點、講求即時方便）；量販走『廣而深』（選擇多、講求一次買齊）；專賣店走『窄而深』（品類少但很專）。商品組合要配合<b>商圈客群</b>與<b>坪數限制</b>，不是越多越好——架位有限，放了滯銷品就排擠了會賣的品。</p>
+    <h4>缺貨 vs 滯銷：庫存的兩難</h4>
+    <p>庫存管理的核心是平衡兩種風險：</p>
+    <ul>
+      <li><b>缺貨（缺料）成本：</b>顧客要買卻沒有，當下少賺一筆，嚴重時顧客轉去別家、甚至流失。</li>
+      <li><b>滯銷／過剩成本：</b>進太多賣不掉，佔資金、佔空間，生鮮還會報廢。</li>
+    </ul>
+    <div class="callout">庫存太少會缺貨、太多會壓資金與報廢——管理目標是用『剛剛好』的庫存，達到高<b>庫存週轉率</b>（賣得快、轉得勤），同時維持低缺貨率。</div>
+    <h4>配送中心（DC）與物流</h4>
+    <p><b>配送中心（Distribution Center, DC）</b>是流通業的心臟：供應商把貨送到 DC，DC 再依各門市訂單分貨、配送。集中到 DC 的好處是<b>規模化採購、統一品管、效率配送</b>，門市不必各自向上百家供應商叫貨。超商更發展出<b>多溫層、多次配送</b>：常溫、冷藏、冷凍分流，鮮食一天送好幾趟，確保新鮮又不大量囤積。</p>
+    <h4>冷鏈：生鮮的生命線</h4>
+    <p><b>冷鏈（cold chain）</b>是讓生鮮、冷凍、鮮食從產地／工廠到貨架全程維持低溫不斷鏈的物流系統。冷鏈一斷，食品安全與品質就出問題。台灣超商的鮮食、超市的生鮮、量販的冷凍食品都高度依賴冷鏈。</p>
+    <h4>補貨機制</h4>
+    <p>怎麼決定『何時補、補多少』？常見方法：</p>
+    <ul>
+      <li><b>定量／定期補貨：</b>低於安全庫存就補，或固定週期盤點補貨。</li>
+      <li><b>自動補貨系統：</b>POS 賣出即扣庫存，系統依銷售與預測自動下單。</li>
+      <li><b>JIT（Just-In-Time，及時補貨）：</b>需要才送、少量多次，減少囤積，但對物流準確度要求極高。</li>
+    </ul>
+    <h4>私有品牌與供應鏈關係</h4>
+    <p>很多流通業者推<b>私有品牌（自有品牌，PB）</b>：自己掌握商品規格、找代工生產、用自家通路銷售。PB 毛利通常較高、能做出差異化，但也需要更深的供應鏈管理能力。這也是流通業『往上游走』、不只是賣別人的貨的展現。</p>
+  `,
+  taiwan:`
+    <h4>台灣案例：超商鮮食的精準補貨</h4>
+    <p>台灣超商的便當、御飯糰、咖啡是高度時效的商品：<b>一天多次配送</b>、依門市與時段預測叫貨，賣得好的店補得勤、賣不動的品快速汰換。鮮食有效期短，叫太多就報廢、叫太少就缺貨，因此超商投入大量資源在<b>銷售預測與自動補貨</b>。教師可於授課前補充最新的鮮食配送頻率與報廢管理資料。</p>
+    <h4>台灣案例：量販與超市的物流</h4>
+    <p>全聯、家樂福、Costco 依靠大型<b>配送中心</b>集中收貨、統一配送到各分店，發揮規模採購與物流效率。全聯近年也擴大生鮮與冷鏈投資，支撐『生鮮到家』與門市生鮮供應。</p>
+  `,
+  intl:`
+    <h4>國際案例：Walmart 與 Amazon 的庫存／物流</h4>
+    <p><b>Walmart</b> 以<b>越庫（cross-docking）</b>聞名：貨進 DC 後幾乎不入庫，直接轉車配送門市，壓低庫存與成本。<b>Amazon</b> 用龐大履約中心（fulfillment center）＋機器人＋演算法做庫存配置，把熱賣品放在離顧客最近的倉，縮短到貨時間。兩者都證明：<b>物流與庫存能力本身就是強大的競爭優勢</b>，不只是後勤。</p>
+  `,
+  discuss:[
+    "便利商店鮮食『常常有、又很少看到大量過期』，背後需要哪些庫存與物流能力？",
+    "店長進貨時，『寧可多一點怕缺貨』和『寧可少一點怕滯銷』各有什麼風險？你會怎麼拿捏？",
+    "如果你是超市生鮮負責人，遇到颱風前搶購，你的庫存與補貨策略要怎麼調整？"
+  ],
+  lab:{
+    name:"Lab 10：庫存補貨情境模擬",
+    goal:"用一張簡單試算表，模擬一週的銷售與補貨，體驗『缺貨』與『滯銷』如何發生，並找出較好的補貨策略。",
+    steps:[
+      "假設你經營一個品項（例如御飯糰），設定期初庫存、每日預估銷量與一個安全庫存值。",
+      "在試算表列出 7 天：當日庫存、當日實際銷量（可自行設定有高有低）、是否缺貨、期末庫存。",
+      "設一條補貨規則（例如：低於安全庫存就補到某個量），逐日計算庫存變化。",
+      "刻意製造一天『暴增銷量』與一天『銷量很差』，看會不會缺貨或滯銷。",
+      "調整補貨規則或安全庫存，試著讓一週內缺貨與報廢都最少。",
+      "記錄你最後採用的策略與結果。"
+    ],
+    deliverable:"一張 7 天庫存補貨模擬表＋一段說明：你的補貨規則、發生過的缺貨／滯銷、最後如何優化。",
+    tools:"Google 試算表或 Excel、紙筆。可用 AI 工具協助設計補貨公式。",
+    rubric:[
+      {c:"模型完整（30%）",d:"是否正確算出每日庫存、缺貨與期末。"},
+      {c:"情境設計（25%）",d:"是否模擬了高峰與低谷、看出兩種風險。"},
+      {c:"策略優化（30%）",d:"補貨規則調整是否真的改善結果。"},
+      {c:"說明清楚（15%）",d:"能否說清楚取捨邏輯。"}
+    ],
+    discuss:[
+      "你的模擬中，缺貨和滯銷哪個比較難避免？為什麼？",
+      "如果這是生鮮（會過期），你的策略要怎麼改變？"
+    ]
+  },
+  quiz:[
+    {q:"庫存管理同時要避免兩種風險，是哪兩種？",
+     options:["缺貨與滯銷","漲價與降價","展店與關店","促銷與廣告"],
+     answer:0, exp:"庫存太少會缺貨（少賺、流失客），太多會滯銷（壓資金、報廢）。管理目標是兩者都最小化。"},
+    {q:"配送中心（DC）在流通體系中的主要功能是？",
+     options:["賣商品給消費者","集中收貨、統一品管、再配送到各門市","只負責收銀","製造商品"],
+     answer:1, exp:"DC 集中採購與配送，門市不必各自向眾多供應商叫貨，提升效率與品管。"},
+    {q:"『冷鏈』指的是？",
+     options:["冬天的促銷","全程維持低溫不斷鏈的生鮮物流系統","冷飲專區","結帳排隊"],
+     answer:1, exp:"冷鏈讓生鮮／冷凍從產地到貨架全程低溫，一旦斷鏈就有食安與品質風險。"},
+    {q:"關於『私有品牌（自有品牌）』，下列何者正確？",
+     options:["就是別人的品牌","業者自訂規格、找代工、用自家通路賣，毛利通常較高","只能在百貨賣","一定比較便宜且品質差"],
+     answer:1, exp:"PB 讓流通業者掌握商品與較高毛利、做出差異化，但需要更強的供應鏈管理能力。"}
+  ],
+  extension:"課後任務：到一家超商或超市，找出 3 個你認為是『私有品牌（自有品牌）』的商品，比較它和同類『全國品牌』的價格與包裝差異，推測業者為什麼要自己做這個品項。",
+  teacherNote:"學生常把『庫存越多越安全』當直覺，要用『壓資金＋報廢＋佔空間』的角度打破它。也要避免把物流講成只是『送貨』——強調 DC、冷鏈、補貨預測是流通業的核心競爭力，呼應第 1 章『流通不等於零售』。Lab 試算表對非商管背景學生可能卡關，建議提供一個半成品範例表。",
+  reviewLine:"商品組合、庫存週轉、配送中心與冷鏈、補貨機制是流通業的後台硬實力；缺貨與滯銷的平衡決定獲利。"
+});
+
+/* ===== 第 11 章 ===== */
+courseData.push({
+  id:11, tag:"核心管理", title:"會員制度、促銷與消費者資料",
+  oneLine:"現代流通業不只賣東西，更在『經營會員』——用點數、APP 與資料分析，把一次性的客變成長期回購的會員。",
+  objectives:[
+    "能說明會員制度與會員經濟的運作邏輯。",
+    "能解釋點數、優惠、APP 如何提升回購與黏著度。",
+    "能說明 CRM 與會員資料分析的用途（如分眾、精準行銷）。",
+    "能初步意識到消費者資料運用的隱私與倫理界線。"
+  ],
+  schedule:[
+    {t:"0–10 分鐘",d:"導入：問『你手機裡有幾個店家 APP／會員？為什麼願意載？』引出會員經濟。"},
+    {t:"10–35 分鐘",d:"核心概念：會員經濟、點數與忠誠方案、APP 與 CRM、會員分眾與精準行銷。"},
+    {t:"35–60 分鐘",d:"案例：超商與量販的會員 APP、點數生態；電商的個人化推薦。"},
+    {t:"60–80 分鐘",d:"Lab：會員 APP 功能比較。"},
+    {t:"80–90 分鐘",d:"回顧、收成果，預告下一章（流通科技與智慧零售）。"}
+  ],
+  concepts:`
+    <h4>會員經濟：從『成交』到『關係』</h4>
+    <p>傳統零售只在乎『這筆有沒有賣成』；現代流通業在乎『這個人會不會一直回來』。<b>會員制度</b>把匿名的客變成可辨識、可經營的會員，目的是提高<b>回購率、客單價與終身價值（LTV）</b>。會員願意加入，是因為有<b>誘因</b>（折扣、點數、專屬優惠）；業者得到的則是<b>資料與黏著</b>。</p>
+    <h4>點數與忠誠方案</h4>
+    <ul>
+      <li><b>點數回饋：</b>消費累點、點數折抵或換商品，鼓勵『下次再來這家』。</li>
+      <li><b>會員價／專屬優惠：</b>登入會員才有的折扣，提升加入誘因。</li>
+      <li><b>分級會員：</b>消費越多級別越高、福利越好，鼓勵集中消費。</li>
+      <li><b>遊戲化：</b>集點、任務、抽獎，增加互動與回訪。</li>
+    </ul>
+    <div class="callout">點數本質是一種『延後的折扣＋資料交換』：你用消費紀錄換優惠，業者用優惠換你的資料與回購。</div>
+    <h4>APP 與 CRM</h4>
+    <p>會員 <b>APP</b> 是業者與消費者的直接通道：推播優惠、累點、行動支付、線上下單、查詢門市。背後的 <b>CRM（顧客關係管理）</b>系統則整理會員的基本資料與消費紀錄，讓業者能：</p>
+    <ul>
+      <li><b>分眾（Segmentation）：</b>把會員分群（高消費、低頻、特定品類偏好…）。</li>
+      <li><b>精準行銷：</b>對不同群發不同優惠（例如只對買過咖啡的人推咖啡券）。</li>
+      <li><b>喚回（Retention）：</b>對很久沒來的會員發召回優惠。</li>
+    </ul>
+    <h4>消費者資料：價值與界線</h4>
+    <p>資料讓行銷更準、補貨更聰明，但也牽涉<b>隱私</b>。蒐集與使用個人資料要符合<b>個資法</b>的告知與同意原則，並注意資料安全。本章先建立『資料是資產也是責任』的觀念，第 14 章會深入討論演算法操控、價格歧視與資料倫理。</p>
+  `,
+  taiwan:`
+    <h4>台灣案例：超商與零售的會員／點數生態</h4>
+    <p>台灣消費者手機裡常見各家超商與零售的會員 APP，提供累點、優惠券、行動支付、預購與寄杯等功能；點數可折抵或兌換商品，形成黏著的回購誘因。全聯、各大超商與量販都積極經營會員 APP 與點數，把線下消費和線上會員資料串起來。教師可於授課前補充各品牌最新的會員數、點數規則與 APP 功能。</p>
+    <h4>台灣案例：電商的個人化</h4>
+    <p>momo、蝦皮等電商依瀏覽與購買紀錄做<b>個人化推薦</b>與<b>再行銷</b>（你看過的商品到處跟著你跑廣告）。這就是 CRM＋資料分析的威力，也是第 13、14 章 AI 推薦與其風險的伏筆。</p>
+  `,
+  intl:`
+    <h4>國際案例：Costco 與 Amazon 的會員模式</h4>
+    <p><b>Costco</b> 是『付費會員制』的代表：你要先付年費才能買，會費本身就是重要獲利來源，也篩選出高忠誠客群。<b>Amazon Prime</b> 用『免運＋影音＋專屬優惠』綁住會員，大幅提高回購與平台黏著。兩者都說明：<b>會員身分本身就能創造價值與壁壘</b>，不只是給折扣。</p>
+  `,
+  discuss:[
+    "你願意為了點數或優惠，交出自己的消費紀錄嗎？你覺得這個交換划算嗎？",
+    "Costco 要先付年費才能進去買，這種『付費會員制』為什麼行得通？對業者有什麼好處？",
+    "收到『剛好是你想要的』推薦或優惠，是貼心還是有點毛？界線在哪？"
+  ],
+  lab:{
+    name:"Lab 11：會員 APP 功能比較",
+    goal:"挑選 2 個不同店家的會員 APP（或會員方案），比較它們的功能、誘因與資料蒐集方式，評估誰的『會員經營』比較強。",
+    steps:[
+      "選 2 個你有用或可查到的會員 APP（例如兩家超商、或一家超商一家電商）。",
+      "列出各自的核心功能（累點、優惠券、支付、線上下單、推播、分級等）。",
+      "比較『加入誘因』：哪一個讓你更想用？為什麼？",
+      "觀察它們蒐集哪些資料、要求哪些權限（消費紀錄、位置、通知等）。",
+      "從『回購黏著度』與『隱私友善度』兩個角度各打一個分數並說明。",
+      "提出 1 個你會建議它新增或改善的功能。"
+    ],
+    deliverable:"一張會員 APP 比較表（功能／誘因／資料蒐集／兩項評分）＋1 個改善建議。",
+    tools:"手機 APP、各品牌官網會員說明、AI 工具協助整理比較表。注意：不需上傳任何個人帳號資料。",
+    rubric:[
+      {c:"功能盤點（30%）",d:"是否完整列出兩者主要功能。"},
+      {c:"誘因分析（25%）",d:"是否說清楚加入與回購誘因。"},
+      {c:"隱私意識（25%）",d:"是否注意到資料蒐集與權限。"},
+      {c:"改善建議（20%）",d:"建議是否具體合理。"}
+    ],
+    discuss:[
+      "你比較的兩個 APP，誰更會『讓你一直回來』？靠的是什麼？",
+      "如果要在『更多優惠』和『更少資料蒐集』之間選，你會選哪個？"
+    ]
+  },
+  quiz:[
+    {q:"會員制度對流通業者最主要的價值是？",
+     options:["增加店面坪數","把一次性客變成可辨識、可經營、會回購的會員","減少商品種類","降低租金"],
+     answer:1, exp:"會員制提高回購、客單與終身價值，並取得可分析的消費資料。"},
+    {q:"CRM（顧客關係管理）資料分析常用來做什麼？",
+     options:["設計店面招牌","會員分眾與精準行銷","計算房租","製造商品"],
+     answer:1, exp:"CRM 把會員分群，對不同群做精準行銷與喚回，提高行銷效率。"},
+    {q:"關於點數／忠誠方案，下列敘述何者較貼切？",
+     options:["純粹是業者佛心送錢","是一種延後折扣＋資料交換，換取回購與黏著","會降低回購率","和會員資料無關"],
+     answer:1, exp:"點數用優惠換取你的回購與消費資料，是會員經濟的核心機制。"},
+    {q:"使用消費者資料時，業者應特別注意？",
+     options:["越多越好不用管","符合個資法的告知與同意、並做好資料安全","只要不被發現就好","資料可隨意賣給任何人"],
+     answer:1, exp:"資料是資產也是責任，需符合個資法並重視資料安全與倫理界線。"}
+  ],
+  extension:"課後任務：挑一個你常用的會員 APP，找出它最近一次推播給你的優惠，分析『它為什麼推這個給你』（你做過什麼讓它這樣判斷？），寫成 150 字。",
+  teacherNote:"本章很容易被學生當成『就是集點』，要拉高到『會員經濟＝經營關係與資料』的層次。同時務必埋下隱私伏筆，但本章保持中性、聚焦經營邏輯，把價格歧視、演算法操控、資料倫理的深入批判留到第 14 章，避免提前發散。Lab 不需學生交出個人帳號資料，提醒保護隱私。",
+  reviewLine:"會員制度＝經營關係與資料；用點數、APP 與 CRM 提升回購與精準行銷，同時要守住隱私與資料倫理。"
+});
+
+/* ===== 第 12 章 ===== */
+courseData.push({
+  id:12, tag:"流通科技", title:"流通科技與智慧零售",
+  oneLine:"從條碼到無人店，科技讓流通業『看得到每一筆交易、管得動每一件庫存』——智慧零售是用科技重做門市與供應鏈。",
+  objectives:[
+    "能說明 POS、ERP、CRM 在流通營運中各自的角色與串接。",
+    "能解釋 RFID、電子標籤、自助結帳、智慧貨架等技術的用途。",
+    "能描述無人商店與倉儲自動化的運作概念與限制。",
+    "能理解『智慧零售』是把資料與自動化導入營運，而非單一炫技。"
+  ],
+  schedule:[
+    {t:"0–10 分鐘",d:"導入：掃一下條碼『嗶』一聲，背後發生了什麼事？引出 POS 與資料流。"},
+    {t:"10–35 分鐘",d:"核心概念：POS／ERP／CRM 三大系統、RFID 與電子標籤、自助結帳、智慧貨架、無人店、倉儲自動化。"},
+    {t:"35–60 分鐘",d:"案例：超商科技服務、無人商店實驗、量販自助結帳。"},
+    {t:"60–80 分鐘",d:"Lab：POS 資料簡易判讀。"},
+    {t:"80–90 分鐘",d:"回顧、收成果，預告下一章（AI 時代的流通業）。"}
+  ],
+  concepts:`
+    <h4>三大系統：POS／ERP／CRM</h4>
+    <ul>
+      <li><b>POS（Point of Sale，銷售時點系統）：</b>結帳那一刻，記錄『什麼商品、何時、何價、賣給誰（若會員）』。POS 是流通業的<b>資料源頭</b>——銷售、庫存扣減、熱銷分析都從這裡來。</li>
+      <li><b>ERP（企業資源規劃）：</b>把採購、庫存、財務、人事等後台流程整合在一個系統，讓營運資料一致、流程順暢。</li>
+      <li><b>CRM（顧客關係管理）：</b>管理會員與消費關係（第 11 章），做分眾與精準行銷。</li>
+    </ul>
+    <div class="callout">POS 管『交易與商品』、ERP 管『企業內部資源』、CRM 管『顧客關係』。三者串起來，門市的每一筆動作都能被記錄、分析與優化。</div>
+    <h4>辨識與結帳技術</h4>
+    <ul>
+      <li><b>條碼與 POS：</b>最基礎，掃碼即知品項與價格、即時扣庫存。</li>
+      <li><b>RFID（無線射頻辨識）：</b>用晶片標籤遠距、批量辨識商品，可快速盤點、防盜、追蹤。常用於服飾（如 Uniqlo 結帳一次感應整籃）。</li>
+      <li><b>電子標籤（電子貨架標籤 ESL）：</b>貨架價格用電子顯示，可遠端統一改價，省人工、減錯誤、支援動態定價。</li>
+      <li><b>自助結帳（self-checkout）：</b>顧客自行掃碼付款，減少排隊與人力，但需防損與協助。</li>
+    </ul>
+    <h4>智慧貨架與無人商店</h4>
+    <p><b>智慧貨架</b>用感測器偵測商品被拿取或庫存量，協助補貨與分析。<b>無人商店</b>結合影像辨識、感測與行動支付，做到『拿了就走、自動結帳』。它展示了技術的可能，但也面臨<b>建置成本高、辨識誤差、補貨與客服仍需人力、商品種類受限</b>等現實限制——所以多為實驗或特定場域，而非全面取代。</p>
+    <h4>倉儲自動化與物流科技</h4>
+    <p>後端的<b>倉儲自動化</b>（自動倉、揀貨機器人、輸送與分揀系統）與<b>物流路線最佳化</b>（用演算法排最省時省油的配送路線）大幅提升履約效率。這些是電商與大型流通能快速到貨的關鍵基礎。</p>
+    <h4>智慧零售的本質</h4>
+    <p><b>智慧零售</b>不是『裝幾個酷炫設備』，而是把<b>資料蒐集（POS、感測、會員）＋分析＋自動化</b>融入選址、補貨、定價、行銷與服務的每一環，讓決策更快更準。技術是手段，<b>提升效率與顧客體驗</b>才是目的。</p>
+  `,
+  taiwan:`
+    <h4>台灣案例：超商是科技服務的綜合體</h4>
+    <p>台灣超商把門市變成『科技服務節點』：多功能事務機（繳費、取票、列印）、行動支付、電子發票、咖啡寄杯與預購、店取等，背後都靠 POS、會員系統與物流串接。超商也持續試驗自助結帳與智慧化設備。教師可於授課前補充各品牌最新的智慧門市與無人店實驗進度。</p>
+    <h4>台灣案例：量販與超市的自助化</h4>
+    <p>家樂福、全聯等已導入<b>自助結帳</b>區，分流尖峰排隊。部分賣場也試行電子標籤與更精準的庫存管理。這些都是『智慧零售』從後台走到顧客眼前的具體例子。</p>
+  `,
+  intl:`
+    <h4>國際案例：Amazon 與 Uniqlo 的零售科技</h4>
+    <p><b>Amazon</b> 曾推出『拿了就走』的無人店概念，結合影像與感測自動結帳，是無人零售的著名實驗；其倉儲也大量使用機器人。<b>Uniqlo（迅銷）</b>在門市廣泛採用 <b>RFID</b>，結帳時整籃一次感應、快速盤點補貨，是 RFID 應用的代表。國際經驗顯示：科技能大幅提效，但要找到『成本與效益划算』的應用場景，而非為科技而科技。教師可於授課前補充這些方案的最新發展。</p>
+  `,
+  discuss:[
+    "結帳『嗶』一聲，POS 同時做了哪些事？（提示：記錄銷售、扣庫存、累計會員、產生分析資料。）",
+    "無人商店聽起來很酷，但為什麼到現在還沒全面取代有人店？有哪些現實限制？",
+    "自助結帳對消費者與業者各有什麼好處與壞處？你喜歡用嗎？"
+  ],
+  lab:{
+    name:"Lab 12：POS 資料簡易判讀",
+    goal:"拿到一份（模擬的）門市銷售資料，練習從中讀出『熱銷品、滯銷品、時段熱點』，並提出一個營運建議。",
+    steps:[
+      "使用老師提供或自行編造的一週門市銷售資料（品項、數量、時段）。",
+      "算出每個品項的總銷量，排出前 3 熱銷與後 3 滯銷。",
+      "找出『哪個時段賣最多』（例如午餐時段、下班時段）。",
+      "推測熱銷與滯銷的原因（商圈、擺位、價格、時段）。",
+      "根據判讀提出 1 個營運建議（例如某品項該加單、某品項該下架或換位）。",
+      "把分析做成一張簡單圖表（長條圖即可）。"
+    ],
+    deliverable:"一份 POS 資料判讀（熱銷／滯銷排名＋時段分析＋1 個營運建議＋1 張圖表）。",
+    tools:"Google 試算表／Excel（做排序與圖表）、AI 工具協助整理。資料可為模擬資料。",
+    rubric:[
+      {c:"資料判讀（35%）",d:"是否正確找出熱銷、滯銷與時段熱點。"},
+      {c:"原因推測（25%）",d:"推測是否合理、連結營運知識。"},
+      {c:"營運建議（25%）",d:"建議是否由資料推得、可執行。"},
+      {c:"呈現（15%）",d:"圖表是否清楚。"}
+    ],
+    discuss:[
+      "光看銷量就決定下架滯銷品，可能會誤判嗎？還要看什麼？",
+      "如果你是店長，這份資料最讓你想立刻採取的行動是什麼？"
+    ]
+  },
+  quiz:[
+    {q:"POS 系統在流通業中最關鍵的角色是？",
+     options:["播放店內音樂","結帳時記錄交易，成為銷售、庫存與分析的資料源頭","設計招牌","打掃門市"],
+     answer:1, exp:"POS 在結帳當下記錄銷售並扣庫存，是流通業最重要的資料源頭。"},
+    {q:"RFID 相較於傳統條碼，最大的優勢是？",
+     options:["比較便宜","可遠距、批量辨識，快速盤點與防盜","只能用在食品","不需要任何系統"],
+     answer:1, exp:"RFID 用無線射頻可一次感應多件、遠距辨識，盤點與結帳更快，如 Uniqlo 整籃感應。"},
+    {q:"關於無人商店，下列敘述何者較正確？",
+     options:["已全面取代有人商店","展示技術可能，但受成本、辨識誤差、補貨客服與品項限制，多為實驗或特定場域","完全不需要任何人力","和 POS 無關"],
+     answer:1, exp:"無人店有現實限制，補貨與客服仍需人力，目前多為實驗或特定場域應用。"},
+    {q:"『智慧零售』的核心精神是？",
+     options:["買最貴的設備","把資料蒐集、分析與自動化融入營運各環節以提升效率與體驗","只做線上不做線下","取消所有員工"],
+     answer:1, exp:"智慧零售是用資料與自動化重做營運流程，技術是手段，效率與體驗才是目的。"}
+  ],
+  extension:"課後任務：到一家有自助結帳或電子標籤的賣場，實際觀察並記錄它的運作與你遇到的問題（好用嗎？卡關嗎？需要店員幫忙嗎？），寫成 150 字心得。",
+  teacherNote:"本章名詞多，容易變成『科技名詞背誦』。建議每講一個技術都回到『它解決什麼營運問題』。要破除『無人店＝未來全面取代』的迷思，強調成本效益與現實限制。也要連回第 1 章：科技服務於批發、零售、物流、平台、供應鏈整體，而非只是門市的玩具。Lab 用模擬資料即可，重點在判讀邏輯。",
+  reviewLine:"POS／ERP／CRM 三系統＋RFID、電子標籤、自助結帳、智慧貨架、倉儲自動化，構成智慧零售；核心是用資料與自動化提升效率與體驗。"
+});
+
+/* ===== 第 13 章 ===== */
+courseData.push({
+  id:13, tag:"AI時代", title:"AI 時代的流通業",
+  oneLine:"AI 正在重寫流通業的每一個環節——從『你會看到什麼商品』到『店裡該補多少貨、賣多少錢』，背後越來越多是演算法在決定。",
+  objectives:[
+    "能說明個人化推薦、AI 導購、AI 客服的運作概念與商業價值。",
+    "能解釋 AI 補貨預測與 AI 動態定價如何提升營運效率。",
+    "能描述生成式 AI、直播／社群商務在流通中的新應用。",
+    "能理解『資料品質與場景適配』是 AI 落地的關鍵，而非萬靈丹。"
+  ],
+  schedule:[
+    {t:"0–10 分鐘",d:"導入：問『為什麼購物網站好像很懂你？』從個人化推薦切入 AI 在流通的角色。"},
+    {t:"10–35 分鐘",d:"核心概念：推薦系統、AI 導購／客服、AI 補貨預測、AI 定價、生成式 AI、智慧供應鏈、直播社群商務。"},
+    {t:"35–60 分鐘",d:"案例：電商推薦與再行銷、AI 客服、生成式 AI 內容、直播帶貨。"},
+    {t:"60–80 分鐘",d:"Lab：AI 導購提示詞設計。"},
+    {t:"80–90 分鐘",d:"回顧、收成果，預告下一章（未來展望與風險討論）。"}
+  ],
+  concepts:`
+    <h4>個人化推薦：流通業的 AI 起點</h4>
+    <p><b>推薦系統</b>用你的瀏覽、購買、停留與相似客群的行為，預測你可能想買什麼，於是『首頁就是你的店』。它能提升轉換率與客單價，是電商的核心引擎。常見手法包含<b>協同過濾</b>（買了 A 的人也常買 B）與<b>內容比對</b>（推給你和看過的東西相似的商品）。</p>
+    <h4>AI 導購與 AI 客服</h4>
+    <ul>
+      <li><b>AI 導購：</b>用對話幫顧客『選對的東西』——理解需求、比較商品、給建議，像線上店員，降低選擇困難、提升成交。</li>
+      <li><b>AI 客服：</b>處理大量重複問題（訂單查詢、退換貨、營業時間），全天候、即時、可同時服務很多人，把人力留給複雜案件。</li>
+    </ul>
+    <h4>AI 補貨預測與動態定價</h4>
+    <ul>
+      <li><b>AI 補貨預測：</b>用歷史銷售、天氣、節慶、活動、地點等大量變數預測需求，讓補貨更準——降低缺貨與報廢。對生鮮鮮食特別有價值。</li>
+      <li><b>AI 動態定價：</b>依需求、庫存、時段、競品價即時調整價格（如電商隨時變價、生鮮接近效期降價）。能優化營收，但用過頭會引發『價格歧視』與信任爭議（第 14 章深入）。</li>
+    </ul>
+    <div class="callout">AI 把流通業從『憑經驗』推向『憑資料與預測』。但 AI 的好壞取決於<b>資料品質</b>與<b>場景適配</b>——資料髒、場景錯，再強的模型也會出錯。</div>
+    <h4>生成式 AI 的新應用</h4>
+    <p><b>生成式 AI</b>（會產生文字、圖片、影音的 AI）為流通帶來新工具：自動生成商品文案與多語描述、製作行銷素材與廣告圖、做對話式導購與智慧客服、輔助分析報告。它大幅降低內容生產成本，但要注意<b>正確性、品牌一致與不誤導</b>。</p>
+    <h4>智慧供應鏈與數位分身</h4>
+    <p>AI 也往上游走：用<b>需求預測＋路線最佳化＋自動化倉儲</b>打造<b>智慧供應鏈</b>，讓『從工廠到貨架』更即時、更省。<b>數位分身（digital twin）</b>則是把實體門市或供應鏈在電腦裡做一個虛擬版本，用來模擬、預測與優化，先在虛擬世界試錯再落地。</p>
+    <h4>直播與社群商務</h4>
+    <p><b>直播電子商務</b>（直播帶貨）與<b>社群商務</b>把『內容＋互動＋即時購買』結合：邊看邊買、限時優惠、留言互動。AI 在其中協助推薦、字幕、即時客服與成效分析，是新零售很活躍的一塊。</p>
+  `,
+  taiwan:`
+    <h4>台灣案例：電商的 AI 個人化與再行銷</h4>
+    <p>momo、蝦皮等台灣電商廣泛使用<b>個人化推薦</b>與<b>再行銷</b>：依你的瀏覽與購買推商品、發優惠，並在其他網站投放『你看過的東西』。超商與零售的會員 APP 也逐步用資料做更精準的推播。教師可於授課前補充各業者最新的 AI 應用案例與成效。</p>
+    <h4>台灣案例：AI 客服與生成式工具</h4>
+    <p>許多台灣零售與電商已導入<b>AI 客服／聊天機器人</b>處理常見問題，並開始用<b>生成式 AI</b>協助商品文案、行銷素材與內部分析。直播帶貨在台灣社群與電商平台也相當活躍。這些都還在快速演進，教師可於授課前補充最新發展。</p>
+  `,
+  intl:`
+    <h4>國際案例：Amazon 與阿里的 AI 應用</h4>
+    <p><b>Amazon</b> 長期以推薦系統著稱（很大比例的銷售來自推薦），並用 AI 做需求預測、倉儲機器人與物流最佳化。<b>Alibaba（阿里巴巴）</b>等以資料中台與 AI 推薦、智慧供應鏈與直播電商見長，把線上線下與物流資料打通。國際經驗顯示，AI 的價值來自<b>把大量資料轉成更準的決策</b>，而不是單一功能的炫技。教師可於授課前補充最新數據與案例。</p>
+  `,
+  discuss:[
+    "購物網站『很懂你』帶來方便，但它是怎麼做到的？你覺得舒服還是有點被看穿？",
+    "AI 客服能即時又全天候，但什麼情況下你還是希望找真人？AI 與真人該怎麼分工？",
+    "AI 動態定價（同一商品不同時間不同價）對消費者公平嗎？業者該不該讓你知道價格是浮動的？"
+  ],
+  lab:{
+    name:"Lab 13：AI 導購提示詞設計",
+    goal:"為一個流通／零售情境設計一個『AI 導購助理』的提示詞（prompt），讓 AI 能像專業店員一樣幫顧客選對商品，並實測、優化。",
+    steps:[
+      "選一個導購情境（例如：超市生鮮挑選、3C 選購、送禮推薦、便利商店即食餐選擇）。",
+      "設計提示詞：設定 AI 的角色、要問顧客哪些問題、推薦時要考慮什麼（預算、需求、偏好）、要怎麼回覆。",
+      "用一個 AI 工具實際測試你的提示詞，扮演顧客和它互動。",
+      "找出問題（推薦太籠統？沒問清楚需求？硬推貴的？），修改提示詞。",
+      "比較『修改前 vs 修改後』的導購效果。",
+      "歸納：一個好的 AI 導購提示詞應該具備哪些要素。"
+    ],
+    deliverable:"一份 AI 導購提示詞（含前後兩版）＋測試對話紀錄＋一段優化心得（好提示詞的要素）。",
+    tools:"任一可對話的 AI 工具、紙筆或文件記錄提示詞與對話。",
+    rubric:[
+      {c:"情境與角色（20%）",d:"導購情境與 AI 角色設定是否清楚。"},
+      {c:"提示詞品質（30%）",d:"是否引導 AI 問需求、給合適建議。"},
+      {c:"測試與優化（30%）",d:"是否真的測試並依結果改善。"},
+      {c:"反思（20%）",d:"能否歸納好提示詞的要素。"}
+    ],
+    discuss:[
+      "你的 AI 導購會不會『硬推貴的』或亂編商品？要怎麼設計才不會誤導顧客？",
+      "AI 導購和真人店員相比，各自的強項與限制是什麼？"
+    ]
+  },
+  quiz:[
+    {q:"電商的『個人化推薦系統』主要根據什麼運作？",
+     options:["店長心情","你的瀏覽、購買與相似客群行為，預測你可能想買什麼","隨機亂推","商品上架順序"],
+     answer:1, exp:"推薦系統用個人與相似客群的行為資料預測偏好，提升轉換與客單。"},
+    {q:"AI 補貨預測的主要好處是？",
+     options:["讓商品變貴","用大量變數更準預測需求，降低缺貨與報廢","取代所有店員","減少商品種類"],
+     answer:1, exp:"AI 用歷史銷售、天氣、節慶等變數提升預測準度，對生鮮鮮食特別有價值。"},
+    {q:"關於『生成式 AI』在流通業的應用，下列何者正確？",
+     options:["只能用來結帳","可生成商品文案、行銷素材、對話式導購與客服，但要注意正確性與不誤導","完全沒有風險","只適合大企業"],
+     answer:1, exp:"生成式 AI 降低內容生產成本，但需注意正確性、品牌一致與避免誤導。"},
+    {q:"下列關於 AI 在流通業的敘述，何者最正確？",
+     options:["只要導入 AI 一定成功","AI 效果取決於資料品質與場景適配，不是萬靈丹","AI 和供應鏈無關","AI 只能用於線上"],
+     answer:1, exp:"AI 的價值來自把好資料轉成更準的決策；資料髒或場景錯，模型也會失準。"}
+  ],
+  extension:"課後任務：找一個你常用的購物網站或 APP，記錄它推薦給你的 5 個商品，分析『它為什麼推這些』，並評估推得準不準、哪一個推薦最讓你心動或最讓你反感。",
+  teacherNote:"本章是全課重點之一，務必『強化 AI』。避免兩個極端：把 AI 神化（好像導入就無敵）或妖魔化（先別急著批判，批判留第 14 章）。本章聚焦『AI 怎麼用、帶來什麼價值』，並埋下『資料品質與倫理』的種子。提醒學生：推薦、定價、補貨背後都是演算法，下一章會討論它的風險。Lab 動手玩 AI 提示詞，學生通常很投入，可現場示範一次。",
+  reviewLine:"AI 重寫流通各環節：個人化推薦、AI 導購／客服、AI 補貨與動態定價、生成式 AI、智慧供應鏈與直播社群商務；成敗取決於資料品質與場景適配。"
+});
+
+/* ===== 第 14 章 ===== */
+courseData.push({
+  id:14, tag:"未來與風險", title:"未來展望與風險討論（期末整理）",
+  oneLine:"AI 時代的流通業更方便也更危險——當演算法決定你看到什麼、買什麼、付多少，我們要學會看穿它的便利背後，並守住消費者的判斷力。",
+  objectives:[
+    "能描繪 AI 時代流通業的未來圖像（個人化、預測式、OMO、平台化）。",
+    "能說明假評論與資訊污染如何扭曲消費者期望，並連結『期望落差』。",
+    "能辨識演算法操控、價格歧視、隱私與平台壟斷等風險。",
+    "能整合全課所學，完成流通業轉型的風險地圖（期末成果）。"
+  ],
+  schedule:[
+    {t:"0–10 分鐘",d:"導入：給一則『看起來超真但其實是假的好評』，問學生會不會被影響，引出資訊污染。"},
+    {t:"10–35 分鐘",d:"核心概念：未來圖像 vs 十大隱憂（聚焦假評論、資訊污染、演算法操控、期望落差、平台壟斷、隱私、就業）。"},
+    {t:"35–60 分鐘",d:"案例＋討論：假評論辨識、平台壟斷與中小店家壓力。"},
+    {t:"60–80 分鐘",d:"Lab：假評論辨識與期望落差分析＋期末整合風險地圖。"},
+    {t:"80–90 分鐘",d:"全課回顧、期末報告說明、收尾。"}
+  ],
+  concepts:`
+    <h4>未來圖像：更個人化、更預測、更融合</h4>
+    <p>把前面各章接起來，AI 時代流通業的方向大致是：<b>個人化推薦</b>（千人千面）、<b>預測式補貨</b>（需求未到貨先到）、<b>智慧／無人門市</b>、<b>AI 代理人購物</b>（你的 AI 幫你比價下單）、<b>即時零售與微型倉儲</b>（更快到貨）、<b>OMO 線上線下融合</b>，以及<b>平台化競爭</b>（少數大平台掌握流量與資料）。方便的另一面，是風險。</p>
+    <h4>核心風險一：假評論與資訊污染</h4>
+    <p>網路評論本來是消費者的重要參考，但<b>假評論</b>（刷好評、抹黑競品、機器人灌水、找人寫業配卻不揭露）大量出現，加上 AI 能批量生成擬真評論，造成<b>資訊污染（information pollution）</b>——可信資訊被大量假資訊稀釋淹沒，讓人難以判斷真假。</p>
+    <h4>核心風險二：期望落差（連結資訊污染）</h4>
+    <p>這正是本課要特別強調的連結：<b>消費者的『期望』是被資訊塑造的</b>。當假評論、誇大行銷與演算法只餵你『好評』，會把期望<b>拉到不真實的高點</b>；實際體驗一旦達不到，就產生<b>期望落差（顧客期望 ＞ 實際感受）</b>——導致失望、客訴、退貨與不信任。也就是說，<b>資訊污染會系統性地製造期望落差</b>。健康的流通生態，需要真實、可信、未被污染的資訊，讓消費者形成合理期望。</p>
+    <div class="callout">假評論／資訊污染 → 不真實的高期望 → 實際體驗達不到 → 期望落差（失望、客訴、不信任）。看穿這條因果鏈，是 AI 時代消費者與業者都需要的素養。</div>
+    <h4>核心風險三：演算法操控與過度誘導</h4>
+    <p>推薦、排序、限時優惠、稀缺提示（『剩 2 件』『3 人正在看』）若被用來<b>操控判斷、誘導過度消費</b>，就踩到倫理紅線。所謂<b>暗黑模式（dark pattern）</b>——刻意設計讓你不小心訂閱、難以取消、誤點加購——是演算法操控的具體形式。</p>
+    <h4>核心風險四：價格歧視與隱私</h4>
+    <p><b>動態定價</b>若演變成依個人資料『看人開價』（不同人不同價），就是<b>價格歧視</b>，引發公平爭議。背後是<b>消費者隱私</b>問題：你的行為被大量蒐集、分析、變現，可能在你不知情下被用來定價、推播甚至評分。還有<b>資料安全／資安風險</b>——資料外洩的傷害巨大。</p>
+    <h4>核心風險五：平台壟斷、就業與中小店家</h4>
+    <ul>
+      <li><b>平台壟斷：</b>少數大平台掌握流量、資料與規則，可能壓縮供應商與小店議價空間、收取高額費用、甚至以自有商品排擠他人。</li>
+      <li><b>中小店家壓力：</b>沒有資料與技術資源的小店，在平台與大型連鎖夾擊下生存更難。</li>
+      <li><b>就業替代與勞動條件：</b>自動化、無人化可能取代部分工作；外送與倉儲也引發勞動條件與權益的討論。</li>
+    </ul>
+    <h4>怎麼面對？素養與責任</h4>
+    <p>面對這些風險，<b>消費者</b>要培養資訊判讀力（辨識假評論、看穿稀缺話術、保護個資）；<b>業者</b>要負起資料倫理與透明責任（不造假評論、不濫用資料、揭露 AI 與定價邏輯）；<b>社會與監管</b>則要在創新與保護間取得平衡。流通業的未來不只是技術問題，更是<b>信任問題</b>。</p>
+  `,
+  taiwan:`
+    <h4>台灣情境：假評論與資訊污染就在身邊</h4>
+    <p>台灣消費者高度依賴網路評論、社群推薦與開箱文做購買決策，因此<b>業配未揭露、刷評、帶風向</b>等資訊污染特別有殺傷力。當你滑到的全是『神好用』，期望被推高，買到手卻普通，就是典型的<b>期望落差</b>。這也呼應本課程的核心關懷：在被污染的資訊環境裡，消費者的合理期望如何被扭曲。教師可於授課前補充台灣近期的假評論或不實行銷案例與相關規範。</p>
+    <h4>台灣情境：平台與中小店家</h4>
+    <p>外送平台、電商平台為店家帶來流量，但抽成、規則與排序也牽動中小店家的生存與議價能力。台灣社會對平台費率、勞動權益、消費者保護的討論持續進行。教師可於授課前補充最新政策、新聞與個案。</p>
+  `,
+  intl:`
+    <h4>國際視野：監管與平台治理</h4>
+    <p>世界各地都在處理 AI 時代流通的風險：對<b>假評論</b>的查緝、對<b>平台壟斷</b>與不公平競爭的調查、對<b>個人資料</b>的保護（如資料保護法規）、對<b>暗黑模式</b>與不實行銷的規範。這顯示風險不是單一國家的問題，而是全球流通數位化共同的課題。教師可於授課前補充最新的國際監管動態與代表性案例，避免使用過時或不確定的數字。</p>
+  `,
+  discuss:[
+    "你買東西前會看評論嗎？你曾經懷疑過某個評論是假的嗎？你是怎麼判斷的？",
+    "『假評論 → 期望被推高 → 實際達不到 → 失望』這條鏈，你自己有沒有親身經歷？業者和平台該負什麼責任？",
+    "為了更方便、更個人化，我們交出越來越多資料。在『便利』與『隱私』之間，你的底線在哪？",
+    "如果你開一家小店，面對大型平台與連鎖，你會怎麼找生存空間？"
+  ],
+  lab:{
+    name:"Lab 14：假評論辨識與期望落差分析＋期末整合風險地圖",
+    goal:"先實作『辨識假評論並分析它如何製造期望落差』，再整合全課所學，畫出一張『流通業 AI 轉型風險地圖』作為期末成果。",
+    steps:[
+      "第一部分（假評論）：找一個商品或店家的網路評論區，挑出 3 則你『懷疑是假』的評論。",
+      "說明你的判斷依據（用詞太完美、帳號可疑、內容空泛或雷同、評論時間集中、只誇不提缺點等）。",
+      "分析：如果消費者相信這些評論，會把期望拉到多高？實際可能產生多大的『期望落差』？",
+      "第二部分（風險地圖）：把全課學到的 AI 時代流通風險（假評論／資訊污染、期望落差、演算法操控、價格歧視、隱私、平台壟斷、就業、資安等）畫成一張地圖。",
+      "為每個風險標出：影響對象（消費者／店家／員工／社會）、嚴重程度、以及一個可行的因應方式。",
+      "選一個你最在意的風險，寫一段 200 字的『給消費者或業者的提醒』。"
+    ],
+    deliverable:"(1) 3 則疑似假評論的辨識與期望落差分析；(2) 一張流通業 AI 轉型風險地圖；(3) 200 字風險提醒。可作為期末報告的一部分。",
+    tools:"購物／評論網站、心智圖或繪圖工具（或紙筆）、試算表、AI 工具協助整理與檢核（但需自行查證、不可照抄）。",
+    rubric:[
+      {c:"假評論辨識（25%）",d:"判斷依據是否具體合理。"},
+      {c:"期望落差分析（25%）",d:"能否清楚連結資訊污染與期望落差。"},
+      {c:"風險地圖（30%）",d:"是否整合全課、分類清楚、有因應方式。"},
+      {c:"反思提醒（20%）",d:"提醒是否深入、可行、有觀點。"}
+    ],
+    discuss:[
+      "AI 已能批量生成擬真假評論，未來消費者還能靠『看評論』做判斷嗎？我們需要什麼新機制？",
+      "在你的風險地圖裡，哪一個風險最難解？為什麼？"
+    ]
+  },
+  quiz:[
+    {q:"『資訊污染』在流通業情境下，最貼切的描述是？",
+     options:["店裡空氣不好","可信資訊被大量假評論、不實行銷稀釋淹沒，讓消費者難辨真假","商品太多","網路太慢"],
+     answer:1, exp:"假評論與不實內容大量出現，稀釋了可信資訊，造成資訊污染，扭曲消費判斷。"},
+    {q:"假評論與『期望落差』之間的關係是？",
+     options:["完全無關","假評論把期望推到不真實的高點，實際體驗達不到就產生期望落差","假評論會降低期望","期望落差只跟價格有關"],
+     answer:1, exp:"資訊污染系統性地推高期望，實際感受達不到便形成期望落差，導致失望與不信任。"},
+    {q:"下列何者屬於『演算法操控／暗黑模式』？",
+     options:["清楚標示價格","用假稀缺（剩2件）、難以取消的訂閱、誤導性加購來誘導消費","提供真實評論","保護消費者個資"],
+     answer:1, exp:"暗黑模式刻意設計誘導或阻撓，操控消費判斷，是 AI 時代需警惕的倫理風險。"},
+    {q:"面對 AI 時代流通業的風險，較健康的態度是？",
+     options:["拒用所有科技","消費者培養資訊判讀力、業者負資料倫理與透明責任、社會在創新與保護間平衡","完全相信平台","只看好評就好"],
+     answer:1, exp:"風險需要消費者素養、業者責任與合理監管三方共同面對，核心是重建信任。"}
+  ],
+  extension:"期末整合任務：以『AI 時代下，一家台灣流通業者（自選：超商／超市／電商／外送等）的機會與風險』為題，整合全課所學寫一份 1～2 頁的短報告，須包含至少 2 個機會、2 個風險（含假評論／資訊污染或期望落差其一）與你的建議。",
+  teacherNote:"本章是全課收尾與價值核心，務必把『假評論 → 資訊污染 → 期望被推高 → 期望落差』這條因果鏈講透，這是本課程刻意強化的觀點。注意平衡：不要把 AI 與平台講成純粹邪惡，而是『強大工具的雙面性』，重點在素養與責任。涉及具體公司爭議、罰則、法規時，避免斷言或使用過時數字，多用『教師可於授課前補充最新資料』。Lab 同時是期末成果，建議預留時間並說明評分。最後務必帶全課回顧，把 14 章串成一條完整的學習路徑。",
+  reviewLine:"AI 時代流通業更方便也更危險：假評論與資訊污染會系統性製造期望落差，加上演算法操控、價格歧視、隱私與平台壟斷等風險，需要消費者素養、業者責任與合理監管共同面對。"
+});
+
+/* =========================================================
+   詞彙表資料（14 個重點詞彙）
+   ========================================================= */
+const glossaryData = [
+  {term:"流通業", en:"Distribution Industry", def:"連接生產者與消費者的整個體系，涵蓋批發、零售、物流與平台，負責把商品從工廠送到消費者手中。流通業 ≠ 只有零售。"},
+  {term:"零售", en:"Retail", def:"直接把商品賣給最終消費者的環節（如超商、超市、量販、電商）。是流通的最後一哩，但只是流通的一部分。"},
+  {term:"批發", en:"Wholesale", def:"大量向生產者進貨，再分售給零售商或其他business的中間環節，發揮集貨、分貨與調節供需的功能。"},
+  {term:"物流", en:"Logistics", def:"商品在空間與時間上的移動與儲存，包含運輸、倉儲、配送、冷鏈等，是流通能否順暢的關鍵基礎。"},
+  {term:"供應鏈", en:"Supply Chain", def:"從原料、生產、配送到銷售的整條鏈結。供應鏈管理就是讓這條鏈又快、又省、又準。"},
+  {term:"POS", en:"Point of Sale", def:"銷售時點系統。結帳當下記錄商品、價格、時間（與會員），是流通業最重要的銷售與庫存資料源頭。"},
+  {term:"CRM", en:"Customer Relationship Management", def:"顧客關係管理。整理會員資料與消費紀錄，用於分眾、精準行銷與會員經營。"},
+  {term:"OMO", en:"Online-Merge-Offline", def:"線上線下融合。把實體門市與線上通路、會員與資料打通，讓消費者在虛實之間無縫購物。與 O2O 概念相近但更強調融合。"},
+  {term:"RFID", en:"Radio Frequency Identification", def:"無線射頻辨識。用晶片標籤遠距、批量辨識商品，可快速盤點、防盜與追蹤，如服飾整籃感應結帳。"},
+  {term:"私有品牌", en:"Private Brand / Private Label", def:"自有品牌。流通業者自訂規格、找代工生產、用自家通路銷售的商品，毛利通常較高、能做差異化。"},
+  {term:"平台經濟", en:"Platform Economy", def:"由平台媒合供需雙方（如電商、外送平台）所形成的經濟模式。平台掌握流量與資料，具強大網路效應，也帶來壟斷疑慮。"},
+  {term:"即時零售", en:"Instant Retail / Quick Commerce", def:"強調極短時間到貨（如數十分鐘）的零售模式，靠在地門市或微型倉儲就近出貨。"},
+  {term:"智慧零售", en:"Smart Retail", def:"把資料蒐集、分析與自動化融入選址、補貨、定價、行銷與服務各環節，用科技提升效率與顧客體驗。"},
+  {term:"生成式 AI", en:"Generative AI", def:"能產生文字、圖片、影音的 AI。流通應用包含商品文案、行銷素材、對話式導購與智慧客服，需注意正確性與不誤導。"}
+];
+
+/* =========================================================
+   案例比較表資料
+   ========================================================= */
+const compareData = {
+  cols:["企業","類型／定位","核心模式","關鍵特色","流通課程重點"],
+  rows:[
+    ["Walmart","美國量販／全通路","天天低價＋強大供應鏈","越庫配送、規模採購、線上線下整合","供應鏈與物流即競爭力"],
+    ["Costco","會員制倉儲量販","付費會員＋精選大包裝低價","會費獲利、SKU 精簡、高坪效尋寶感","付費會員制與商品策略"],
+    ["Amazon","全球電商／平台","海量商品＋極致物流＋推薦","履約中心、Prime 會員、AI 推薦","平台、物流與資料驅動"],
+    ["7-ELEVEN","便利商店連鎖","高密度門市＋鮮食＋服務節點","多溫層多次配送、代收取貨、服務擴張","超商體系與鮮食物流"],
+    ["全聯","台灣超市","展店密集＋生鮮＋親民價","規模採購、生鮮與冷鏈、會員 APP","台灣超市與會員經營"],
+    ["momo","台灣電商","快速到貨＋衛星倉","物流自建、個人化推薦與再行銷","電商物流與 AI 行銷"],
+    ["蝦皮","電商／平台","平台媒合＋社群與直播","C2C／B2C、行動優先、直播帶貨","平台經濟與社群商務"]
+  ],
+  note:"本表為教學用的概念性整理，幫助學生比較不同流通模式；各企業的具體店數、財報與市占等數字會變動，教師可於授課前補充最新資料。"
+};
+
+/* =========================================================
+   期末討論題、小組報告題目
+   ========================================================= */
+const finalDiscussData = [
+  "綜觀全課：你認為『流通業』和『零售業』最大的差別是什麼？請用批發、物流、平台、供應鏈的關係來說明。",
+  "台灣便利商店密度世界數一數二，這對消費者、店家與社會分別是好是壞？",
+  "AI 讓流通更個人化、更有效率，但也帶來假評論、演算法操控與隱私風險。你認為『便利』與『風險』該如何取得平衡？",
+  "如果你要創立一個流通／零售事業，你會選擇什麼模式（實體？電商？平台？OMO？）？為什麼？",
+  "在資訊污染嚴重的時代，消費者要如何保護自己的判斷力？業者與平台又該負什麼責任？"
+];
+
+const projectTopicsData = [
+  "選一家台灣流通業者，分析它的商業模式、優勢與面臨的挑戰，並提出一個轉型建議。",
+  "比較兩種流通模式（如超商 vs 電商、量販 vs 即時零售）的優劣與適用情境。",
+  "設計一間『未來智慧門市』：說明它的科技、營運、會員與消費體驗，並評估可行性與風險。",
+  "以『假評論與期望落差』為主題，調查一個產業或平台的評論可信度，提出改善建議。",
+  "研究一個外送或電商平台對中小店家的影響，從機會與壓力兩面分析並提出政策或經營建議。",
+  "做一份『流通業 AI 應用與風險地圖』，整合本課所學，提出你對產業未來的觀點。"
+];
+
+/* =========================================================
+   教師使用建議資料
+   ========================================================= */
+const teacherGuideData = `
+  <p>這份互動教案是為<b>一學期 18 週、實際授課 14 次、每次 90 分鐘（2 節）</b>的「流通業管理」課程設計。以下提供使用建議：</p>
+  <h4>一、課程節奏（對應 14 章）</h4>
+  <ul>
+    <li><b>第 1 週：</b>課程導入與行政說明，可使用「課前導覽」頁帶學生認識課程地圖與網站操作。</li>
+    <li><b>第 2～8 次課：</b>第 1～7 章，建立基礎概念、產業歷史、國際與台灣案例（含超商、超市量販會員制）。</li>
+    <li><b>期中考週：</b>不上新課，可用前 7 章的小測驗與詞彙表複習。</li>
+    <li><b>第 9～15 次課：</b>第 8～14 章，台灣電商、門市營運、商品庫存物流、會員資料、流通科技、AI 與未來風險。</li>
+    <li><b>3 次休假日與最後 2 週：</b>不上新課；最後 2 週用於期末考、成果發表或第 14 章的整合 Lab 與報告。</li>
+  </ul>
+  <h4>二、每章 90 分鐘怎麼上</h4>
+  <p>每章內建「90 分鐘配置」（導入 0–10、概念 10–35、案例討論 35–60、Lab 60–80、回顧 80–90）。教師可直接照表操課，或依班級狀況調整。建議用「概念」分頁投影講解，「案例」分頁帶討論，「Lab」分頁讓學生動手，「小測驗」分頁即時驗收，「教師提醒」分頁僅供教師參考（提示易錯點）。</p>
+  <h4>三、互動功能的教學運用</h4>
+  <ul>
+    <li><b>章節切換＋時間軸：</b>讓學生隨時看到自己在 14 章學習路徑中的位置。</li>
+    <li><b>小測驗：</b>可當課中即時問答或課後自我檢核，點選即顯示對錯與解析。</li>
+    <li><b>Lab 步驟勾選：</b>學生在課堂逐步完成、勾選，教師可巡堂掌握進度。</li>
+    <li><b>進度記錄（localStorage）：</b>系統會把已讀章節與已完成 Lab 步驟記在學生自己的瀏覽器；換裝置或清快取會重置，提醒學生這不是雲端帳號。</li>
+    <li><b>搜尋與詞彙表：</b>適合複習與作報告時快速查找概念。</li>
+    <li><b>案例比較表：</b>適合做國際／台灣案例的橫向對照討論。</li>
+    <li><b>列印友善：</b>瀏覽器列印時會套用精簡版面，方便印成紙本教案或講義（建議先「開始學習」展開章節再列印）。</li>
+  </ul>
+  <h4>四、評量建議</h4>
+  <p>可組合：課堂 Lab 成果（每章）＋小測驗＋期末整合報告（見「小組報告題目建議」）。第 14 章的「風險地圖 Lab」很適合作為期末整合成果。</p>
+  <h4>五、內容更新提醒</h4>
+  <p>本教案刻意不寫死會變動的數字（店數、財報、市占、最新法規）。凡標示「教師可於授課前補充最新資料」之處，請於授課前查證並補充當前資料，確保課程與產業同步。</p>
+  <h4>六、課程價值主軸</h4>
+  <p>請特別把握兩條主線：(1)「流通業不等於零售業」——全程提醒批發、零售、物流、平台、供應鏈的關係；(2)「AI 時代的雙面性」——尤其是「假評論 → 資訊污染 → 期望被推高 → 期望落差」這條因果鏈，是本課程刻意強化、貫穿到第 14 章的核心關懷。</p>
+`;
+
+/* =========================================================
+   以下為渲染與互動引擎
+   ========================================================= */
+
+/* ---- 進度狀態（localStorage） ---- */
+const STORE_KEY = "distrib_course_progress_v1";
+let progress = loadProgress();
+
+function loadProgress(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){ /* 忽略讀取錯誤 */ }
+  return { done:{}, labs:{} };   // done: {chapterId:true}；labs: {"chapId-stepIndex":true}
+}
+function saveProgress(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(progress)); }catch(e){}
+}
+
+/* ---- 工具：以 id 取得章節 ---- */
+function getChapter(id){ return courseData.find(c => c.id === id); }
+/* 正式章節（不含課前導覽 id:0），共 14 章 */
+const formalChapters = courseData.filter(c => c.id >= 1);
+
+/* =========================================================
+   時間軸
+   ========================================================= */
+function renderTimeline(){
+  const wrap = document.getElementById("timelineBar");
+  if(!wrap) return;
+  wrap.innerHTML = formalChapters.map(c => `
+    <button class="tl-node" data-act="chapter" data-id="${c.id}" title="${escapeHtml(c.title)}">
+      <span class="tl-num">${c.id}</span>
+      <span class="tl-label">${escapeHtml(c.title)}</span>
+    </button>
+  `).join("");
+}
+
+/* =========================================================
+   章節卡片
+   ========================================================= */
+function renderChapterGrid(){
+  const grid = document.getElementById("chapterGrid");
+  if(!grid) return;
+  grid.innerHTML = courseData.map(c => {
+    const isIntro = c.id === 0;
+    const doneClass = progress.done[c.id] ? "done" : "";
+    return `
+      <button class="ch-card ${isIntro ? "intro" : ""} ${doneClass}" data-act="chapter" data-id="${c.id}">
+        <div class="ch-card-top">
+          <span class="ch-badge">${isIntro ? "導覽" : "第 " + c.id + " 章"}</span>
+          <span class="ch-tag">${escapeHtml(c.tag)}</span>
+        </div>
+        <h3 class="ch-card-title">${escapeHtml(c.title)}</h3>
+        <p class="ch-card-line">${escapeHtml(c.oneLine || c.reviewLine || "")}</p>
+        <div class="ch-card-foot">
+          <span class="ch-foot-spacer"></span>
+          <span class="ch-go">${progress.done[c.id] ? "重新開啟 →" : "開啟 →"}</span>
+        </div>
+      </button>
+    `;
+  }).join("");
+}
+
+/* =========================================================
+   開啟章節 → 渲染 panel（tabs）
+   ========================================================= */
+let currentChapterId = null;
+
+function openChapter(id){
+  const c = getChapter(id);
+  if(!c) return;
+  currentChapterId = id;
+  const panel = document.getElementById("chapterPanel");
+  if(!panel) return;
+  panel.style.display = "block";   // 確保面板在螢幕上可見（CSS 預設為 none）
+
+  const isIntro = c.id === 0;
+
+  // 分頁定義：導覽頁只有「概念」與「教師提醒」(若有)
+  const tabs = [];
+  tabs.push({key:"concepts", label:"概念"});
+  if(!isIntro){
+    tabs.push({key:"cases", label:"案例"});
+    tabs.push({key:"lab", label:"Lab"});
+    tabs.push({key:"quiz", label:"小測驗"});
+  }
+  tabs.push({key:"teacher", label:"教師提醒"});
+
+  panel.innerHTML = `
+    <div class="panel-head">
+      <div class="panel-head-meta">
+        <span class="ch-badge">${isIntro ? "課前導覽" : "第 " + c.id + " 章"}</span>
+        <span class="ch-tag">${escapeHtml(c.tag)}</span>
+      </div>
+      <h2 class="panel-title">${escapeHtml(c.title)}</h2>
+      <p class="panel-oneline">${escapeHtml(c.oneLine || "")}</p>
+      ${renderObjectives(c)}
+      ${renderSchedule(c)}
+    </div>
+
+    <div class="tab-bar" id="tabBar">
+      ${tabs.map((t,i)=>`<button class="tab-btn ${i===0?"active":""}" data-act="tab" data-tab="${t.key}">${t.label}</button>`).join("")}
+    </div>
+
+    <div class="tab-body" id="tabBody"></div>
+
+    <div class="panel-foot">
+      <button class="btn-done ${progress.done[c.id] ? "is-done" : ""}" data-act="done" data-id="${c.id}">
+        ${progress.done[c.id] ? "✓ 已標記完成（再按取消）" : "標記本章完成"}
+      </button>
+      ${!isIntro && c.id < 14 ? `<button class="btn-next" data-act="chapter" data-id="${c.id+1}">下一章 →</button>` : ""}
+    </div>
+  `;
+
+  switchTab(tabs[0].key);
+
+  // 高亮目前時間軸節點
+  document.querySelectorAll(".tl-node").forEach(n=>{
+    n.classList.toggle("active", Number(n.dataset.id)===id);
+  });
+  // 捲動到面板（含後備寫法，避免部分沙箱環境忽略平滑捲動）
+  const anchor = document.getElementById("chapterPanel") || document.getElementById("chapters");
+  if(anchor){
+    try{
+      anchor.scrollIntoView({behavior:"smooth", block:"start"});
+    }catch(e){
+      anchor.scrollIntoView(true);
+    }
+  }
+}
+
+function renderObjectives(c){
+  if(!c.objectives || !c.objectives.length) return "";
+  return `<div class="obj-box"><h4>學習目標</h4><ul>${c.objectives.map(o=>`<li>${escapeHtml(o)}</li>`).join("")}</ul></div>`;
+}
+function renderSchedule(c){
+  if(!c.schedule || !c.schedule.length) return "";
+  return `<details class="sched"><summary>90 分鐘課程配置</summary><table class="sched-table"><tbody>${
+    c.schedule.map(s=>`<tr><th>${escapeHtml(s.t)}</th><td>${escapeHtml(s.d)}</td></tr>`).join("")
+  }</tbody></table></details>`;
+}
+
+/* ---- 分頁切換 ---- */
+function switchTab(key){
+  const c = getChapter(currentChapterId);
+  if(!c) return;
+  document.querySelectorAll("#tabBar .tab-btn").forEach(b=>{
+    b.classList.toggle("active", b.dataset.tab===key);
+  });
+  const body = document.getElementById("tabBody");
+  if(key==="concepts"){
+    body.innerHTML = `<div class="rich">${c.concepts || "<p>（本頁為導覽）</p>"}</div>`;
+  }else if(key==="cases"){
+    body.innerHTML = `
+      <div class="rich"><h3 class="case-h">台灣案例</h3>${c.taiwan || "<p>—</p>"}</div>
+      <div class="rich"><h3 class="case-h">國際案例</h3>${c.intl || "<p>—</p>"}</div>
+      ${renderDiscuss(c)}
+    `;
+  }else if(key==="lab"){
+    body.innerHTML = renderLab(c);
+  }else if(key==="quiz"){
+    body.innerHTML = renderQuiz(c);
+  }else if(key==="teacher"){
+    body.innerHTML = `
+      ${c.extension ? `<div class="ext-box"><h4>課後延伸任務</h4><p>${escapeHtml(c.extension)}</p></div>`:""}
+      ${c.teacherNote ? `<div class="teacher-box"><h4>教師提醒（易錯／易誤解）</h4><p>${escapeHtml(c.teacherNote)}</p></div>`:""}
+    `;
+  }
+}
+
+function renderDiscuss(c){
+  if(!c.discuss || !c.discuss.length) return "";
+  return `<div class="discuss-box"><h4>課堂討論題</h4><ol>${c.discuss.map(d=>`<li>${escapeHtml(d)}</li>`).join("")}</ol></div>`;
+}
+
+/* =========================================================
+   Lab 渲染（含步驟勾選 + 進度）
+   ========================================================= */
+function renderLab(c){
+  const lab = c.lab;
+  if(!lab) return "<p>本章無 Lab。</p>";
+  const steps = lab.steps.map((s,i)=>{
+    const k = c.id + "-" + i;
+    const checked = progress.labs[k] ? "checked" : "";
+    return `
+      <li class="lab-step ${checked?"checked":""}" data-act="labstep" data-key="${k}" data-chap="${c.id}">
+        <span class="lab-check">${checked?"✓":""}</span>
+        <span class="lab-step-text">${escapeHtml(s)}</span>
+      </li>`;
+  }).join("");
+  const total = lab.steps.length;
+  const doneN = lab.steps.filter((s,i)=>progress.labs[c.id+"-"+i]).length;
+
+  return `
+    <div class="lab-wrap">
+      <div class="lab-banner">
+        <span class="lab-icon">🧪</span>
+        <div>
+          <h3>${escapeHtml(lab.name)}</h3>
+          <p>${escapeHtml(lab.goal)}</p>
+        </div>
+      </div>
+
+      <div class="lab-grid">
+        <div class="lab-col">
+          <h4>操作步驟（點擊可勾選）</h4>
+          <ul class="lab-steps">${steps}</ul>
+          <div class="lab-progress">
+            <div class="lab-progress-bar"><span id="labFill_${c.id}" style="width:${total? (doneN/total*100):0}%"></span></div>
+            <span class="lab-progress-text" id="labText_${c.id}">${doneN} / ${total} 步驟完成</span>
+          </div>
+        </div>
+        <div class="lab-col">
+          <div class="lab-info"><h4>學生產出</h4><p>${escapeHtml(lab.deliverable)}</p></div>
+          <div class="lab-info"><h4>可用工具</h4><p>${escapeHtml(lab.tools)}</p></div>
+          <div class="lab-info"><h4>評分標準</h4><table class="rubric"><tbody>${
+            lab.rubric.map(r=>`<tr><th>${escapeHtml(r.c)}</th><td>${escapeHtml(r.d)}</td></tr>`).join("")
+          }</tbody></table></div>
+          ${lab.discuss && lab.discuss.length ? `<div class="lab-info"><h4>Lab 討論問題</h4><ul>${lab.discuss.map(d=>`<li>${escapeHtml(d)}</li>`).join("")}</ul></div>`:""}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function toggleLabStep(key, chapId){
+  progress.labs[key] = !progress.labs[key];
+  if(!progress.labs[key]) delete progress.labs[key];
+  saveProgress();
+  // 局部更新該步驟與進度條
+  const c = getChapter(chapId);
+  const li = document.querySelector('.lab-step[data-key="'+key+'"]');
+  if(li){
+    const on = !!progress.labs[key];
+    li.classList.toggle("checked", on);
+    li.querySelector(".lab-check").textContent = on ? "✓" : "";
+  }
+  const total = c.lab.steps.length;
+  const doneN = c.lab.steps.filter((s,i)=>progress.labs[chapId+"-"+i]).length;
+  const fill = document.getElementById("labFill_"+chapId);
+  const txt = document.getElementById("labText_"+chapId);
+  if(fill) fill.style.width = (total? doneN/total*100:0)+"%";
+  if(txt) txt.textContent = doneN + " / " + total + " 步驟完成";
+}
+
+/* =========================================================
+   小測驗渲染與互動
+   ========================================================= */
+function renderQuiz(c){
+  if(!c.quiz || !c.quiz.length) return "<p>本章無小測驗。</p>";
+  const items = c.quiz.map((q,qi)=>{
+    const opts = q.options.map((o,oi)=>`
+      <button class="quiz-opt" data-act="quiz" data-chap="${c.id}" data-q="${qi}" data-o="${oi}">
+        <span class="opt-mark">${String.fromCharCode(65+oi)}</span>
+        <span class="opt-text">${escapeHtml(o)}</span>
+      </button>`).join("");
+    return `
+      <div class="quiz-item" data-qi="${qi}">
+        <p class="quiz-q"><span class="quiz-no">Q${qi+1}</span>${escapeHtml(q.q)}</p>
+        <div class="quiz-opts">${opts}</div>
+        <div class="quiz-exp" id="exp_${c.id}_${qi}" hidden></div>
+      </div>`;
+  }).join("");
+  return `<div class="quiz-wrap"><div class="quiz-hint">點選你的答案，立即顯示對錯與解析。</div>${items}</div>`;
+}
+
+function answerQuiz(chapId, qi, oi){
+  const c = getChapter(chapId);
+  const q = c.quiz[qi];
+  const item = document.querySelector('.quiz-item[data-qi="'+qi+'"]');
+  if(!item) return;
+  // 已作答就不重複
+  if(item.classList.contains("answered")) return;
+  item.classList.add("answered");
+
+  const btns = item.querySelectorAll(".quiz-opt");
+  btns.forEach(b=>{
+    const o = Number(b.dataset.o);
+    b.disabled = true;
+    if(o === q.answer) b.classList.add("correct");
+    if(o === oi && oi !== q.answer) b.classList.add("wrong");
+  });
+
+  const exp = document.getElementById("exp_"+chapId+"_"+qi);
+  const right = oi === q.answer;
+  exp.hidden = false;
+  exp.innerHTML = `<span class="exp-tag ${right?"ok":"no"}">${right?"答對了！":"答錯了"}</span> ${escapeHtml(q.exp)}`;
+}
+
+/* =========================================================
+   標記章節完成
+   ========================================================= */
+function toggleDone(id){
+  progress.done[id] = !progress.done[id];
+  if(!progress.done[id]) delete progress.done[id];
+  saveProgress();
+  updateGlobalProgress();
+  renderChapterGrid();
+  // 更新 panel 內按鈕
+  if(currentChapterId === id){
+    const c = getChapter(id);
+    const btn = document.querySelector(".btn-done");
+    if(btn){
+      const on = !!progress.done[id];
+      btn.classList.toggle("is-done", on);
+      btn.textContent = on ? "✓ 已標記完成（再按取消）" : "標記本章完成";
+    }
+  }
+}
+
+/* =========================================================
+   全域進度條（只計 14 個正式章節）
+   ========================================================= */
+function updateGlobalProgress(){
+  const total = formalChapters.length; // 14
+  const done = formalChapters.filter(c=>progress.done[c.id]).length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  const fill = document.getElementById("gpFill");
+  const text = document.getElementById("gpText");
+  if(fill) fill.style.width = pct + "%";
+  if(text) text.textContent = `已完成 ${done} / ${total} 章（${pct}%）`;
+}
+
+function resetProgress(){
+  if(!confirm("確定要清除所有學習進度（已完成章節與 Lab 勾選）嗎？此動作無法復原。")) return;
+  progress = { done:{}, labs:{} };
+  saveProgress();
+  updateGlobalProgress();
+  renderChapterGrid();
+  if(currentChapterId!=null) openChapter(currentChapterId);
+}
+
+/* =========================================================
+   詞彙表
+   ========================================================= */
+function renderGlossary(){
+  const grid = document.getElementById("glossaryGrid");
+  if(!grid) return;
+  grid.innerHTML = glossaryData.map(g=>`
+    <div class="gloss-card">
+      <div class="gloss-term">${escapeHtml(g.term)}<span class="gloss-en">${escapeHtml(g.en)}</span></div>
+      <p class="gloss-def">${escapeHtml(g.def)}</p>
+    </div>
+  `).join("");
+}
+
+/* =========================================================
+   案例比較表
+   ========================================================= */
+function renderCompare(){
+  const wrap = document.getElementById("compareWrap");
+  if(!wrap) return;
+  wrap.innerHTML = `
+    <div class="table-scroll">
+      <table class="compare-table">
+        <thead><tr>${compareData.cols.map(h=>`<th>${escapeHtml(h)}</th>`).join("")}</tr></thead>
+        <tbody>${compareData.rows.map(r=>`<tr>${r.map((cell,i)=>i===0?`<th>${escapeHtml(cell)}</th>`:`<td>${escapeHtml(cell)}</td>`).join("")}</tr>`).join("")}</tbody>
+      </table>
+    </div>
+    <p class="compare-note">${escapeHtml(compareData.note)}</p>
+  `;
+}
+
+/* =========================================================
+   總複習區
+   ========================================================= */
+function renderReview(){
+  const grid = document.getElementById("reviewGrid");
+  if(grid){
+    grid.innerHTML = courseData.map(c=>{
+      const label = c.id===0 ? "導覽" : "第 "+c.id+" 章";
+      return `<div class="review-card"><div class="review-head"><span class="ch-badge">${label}</span><b>${escapeHtml(c.title)}</b></div><p>${escapeHtml(c.reviewLine || c.oneLine || "")}</p></div>`;
+    }).join("");
+  }
+  const fd = document.getElementById("finalDiscuss");
+  if(fd){
+    fd.innerHTML = `<ol>${finalDiscussData.map(d=>`<li>${escapeHtml(d)}</li>`).join("")}</ol>`;
+  }
+  const pt = document.getElementById("projectTopics");
+  if(pt){
+    pt.innerHTML = `<ol>${projectTopicsData.map(d=>`<li>${escapeHtml(d)}</li>`).join("")}</ol>`;
+  }
+}
+
+/* =========================================================
+   教師使用建議
+   ========================================================= */
+function renderTeacherGuide(){
+  const el = document.getElementById("teacherGuide");
+  if(el) el.innerHTML = teacherGuideData;
+}
+
+/* =========================================================
+   搜尋功能
+   ========================================================= */
+function buildSearchIndex(){
+  // 把每章可搜尋文字攤平
+  return courseData.map(c=>{
+    const parts = [
+      c.title, c.tag, c.oneLine, c.reviewLine, c.extension, c.teacherNote,
+      (c.objectives||[]).join(" "),
+      stripHtml(c.concepts), stripHtml(c.taiwan), stripHtml(c.intl),
+      (c.discuss||[]).join(" "),
+      c.lab ? (c.lab.name+" "+c.lab.goal+" "+(c.lab.steps||[]).join(" ")) : "",
+      (c.quiz||[]).map(q=>q.q+" "+q.exp).join(" ")
+    ];
+    return { id:c.id, title:c.title, text: parts.filter(Boolean).join("　") };
+  });
+}
+let SEARCH_INDEX = [];
+
+function doSearch(){
+  const kw = (document.getElementById("searchInput").value || "").trim();
+  const box = document.getElementById("searchResults");
+  if(!box) return;
+  if(!kw){ box.innerHTML = ""; box.classList.remove("show"); return; }
+  const low = kw.toLowerCase();
+  const hits = SEARCH_INDEX.map(item=>{
+    const idx = item.text.toLowerCase().indexOf(low);
+    if(idx === -1) return null;
+    const start = Math.max(0, idx-18);
+    const snippet = item.text.substring(start, idx+kw.length+40);
+    return { id:item.id, title:item.title, snippet };
+  }).filter(Boolean);
+
+  if(!hits.length){
+    box.innerHTML = `<div class="search-empty">找不到「${escapeHtml(kw)}」相關內容，試試「便利商店」「AI」「物流」「全聯」「Amazon」等關鍵字。</div>`;
+  }else{
+    box.innerHTML = hits.map(h=>{
+      const label = h.id===0 ? "導覽" : "第 "+h.id+" 章";
+      return `<button class="search-hit" data-act="searchhit" data-id="${h.id}">
+        <span class="ch-badge">${label}</span>
+        <b>${escapeHtml(h.title)}</b>
+        <span class="search-snip">…${highlight(h.snippet, kw)}…</span>
+      </button>`;
+    }).join("");
+  }
+  box.classList.add("show");
+}
+function closeSearch(){
+  const box = document.getElementById("searchResults");
+  if(box){ box.classList.remove("show"); box.innerHTML=""; }
+  const inp = document.getElementById("searchInput");
+  if(inp) inp.value = "";
+}
+
+/* =========================================================
+   小工具：escapeHtml / stripHtml / highlight
+   ========================================================= */
+function escapeHtml(str){
+  if(str==null) return "";
+  return String(str).replace(/[&<>"']/g, s=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[s]));
+}
+function stripHtml(html){
+  if(!html) return "";
+  return html.replace(/<[^>]*>/g, " ").replace(/\s+/g," ").trim();
+}
+function highlight(text, kw){
+  const safe = escapeHtml(text);
+  if(!kw) return safe;
+  const safeKw = escapeHtml(kw).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return safe.replace(new RegExp(safeKw, "gi"), m=>`<mark>${m}</mark>`);
+}
+
+/* =========================================================
+   手機選單切換
+   ========================================================= */
+function toggleMenu(){
+  const nav = document.getElementById("mainNav");
+  if(nav) nav.classList.toggle("open");
+}
+function goSection(id){
+  const el = document.getElementById(id);
+  if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
+  const nav = document.getElementById("mainNav");
+  if(nav) nav.classList.remove("open");
+}
+
+/* =========================================================
+   事件委派：統一處理所有點擊（取代行內 onclick，
+   可在沙箱預覽與本機檔案中穩定運作）
+   ========================================================= */
+function handleClick(e){
+  const el = e.target.closest("[data-act]");
+  if(!el) return;
+  const act = el.dataset.act;
+  switch(act){
+    case "chapter":
+      e.preventDefault();
+      openChapter(Number(el.dataset.id));
+      break;
+    case "tab":
+      switchTab(el.dataset.tab);
+      break;
+    case "quiz":
+      answerQuiz(Number(el.dataset.chap), Number(el.dataset.q), Number(el.dataset.o));
+      break;
+    case "labstep":
+      toggleLabStep(el.dataset.key, Number(el.dataset.chap));
+      break;
+    case "done":
+      toggleDone(Number(el.dataset.id));
+      break;
+    case "reset":
+      resetProgress();
+      break;
+    case "menu": {
+      const nav = document.getElementById("mainnav");
+      if(nav) nav.classList.toggle("open");
+      break;
+    }
+    case "searchhit":
+      openChapter(Number(el.dataset.id));
+      closeSearch();
+      break;
+  }
+}
+
+/* =========================================================
+   初始化
+   ========================================================= */
+function init(){
+  document.addEventListener("click", handleClick);
+  renderTimeline();
+  renderChapterGrid();
+  renderGlossary();
+  renderCompare();
+  renderReview();
+  renderTeacherGuide();
+  updateGlobalProgress();
+  SEARCH_INDEX = buildSearchIndex();
+  // 綁定搜尋輸入
+  const si = document.getElementById("searchInput");
+  if(si){
+    si.addEventListener("input", doSearch);
+    si.addEventListener("keyup", e=>{ if(e.key==="Escape") closeSearch(); });
+  }
+  // 預設開啟課前導覽
+  openChapter(0);
+}
+document.addEventListener("DOMContentLoaded", init);
+
+
+</script>
+</body>
+</html>
