@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 全站基礎樣式：乾淨背景、舒適行高，適合長時間閱讀 */
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-slate-50 text-slate-800 antialiased;
+  line-height: 1.75;
+}
+
+/* 區段標題的共用樣式（可在頁面以 .section-title 套用） */
+@layer components {
+  .section-title {
+    @apply text-2xl font-bold text-slate-900 sm:text-3xl;
+  }
+  .section-sub {
+    @apply mt-2 text-slate-500;
+  }
+}
