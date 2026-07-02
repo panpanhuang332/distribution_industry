@@ -187,4 +187,7 @@ class PaperStore:
             except (json.JSONDecodeError, TypeError):
                 d[key] = []
         d.pop("norm_title", None)
+        # 衍生欄位：摘要覆蓋率追蹤（Elsevier 期刊在 Crossref 常無摘要）。
+        # first_seen 已是 papers 表欄位，直接隨 SELECT * 帶出，供 Phase 3 推播去重。
+        d["has_abstract"] = bool((d.get("abstract") or "").strip())
         return d

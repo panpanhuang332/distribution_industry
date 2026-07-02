@@ -19,6 +19,10 @@ crossref:
   # 只保留這些 Crossref type（過濾掉勘誤、書評、editorial…可自行增減）
   allowed_types:
     - "journal-article"
+  # 防噪音：published date 早於「今天 - 此天數」的項目直接丟棄。
+  # 避免出版社批次更新舊文 metadata 時（index-date 變新）灌爆雷達。
+  # 預設 730 天（2 年）；設為 0 或負數可關閉此規則。
+  max_published_age_days: 730
   # 每次請求抓幾筆（Crossref 上限 1000；搭配 cursor 分頁）
   rows_per_page: 100
   # 指數退避設定

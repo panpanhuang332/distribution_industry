@@ -9,7 +9,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from scholar_radar.config import load_config
-from scholar_radar.pipeline import run_fetch_and_score
+from scholar_radar.pipeline import run_fetch_and_score, _drop_stale
 from scholar_radar.store import PaperStore
 from scholar_radar.transport import FixtureTransport
 from scholar_radar.models import Paper
@@ -55,6 +55,17 @@ class TestPipeline(unittest.TestCase):
         self.assertGreater(papers[0]["score"], 5)
         # 財務工程那篇應為最低（負分或 0）
         self.assertLessEqual(papers[-1]["score"], 0)
+        # 每筆都有 has_abstract 與 first_seen 欄位
+        for p in papers:
+            self.assertIn("has_abstract", p)
+            self.assertIsInstance(p["has_abstract"], bool)
+            self.assertIn("first_seen", p)
+            self.assertTrue(p["first_seen"])
+        # summary 帶 per_journal 摘要覆蓋率
+        self.assertEqual(len(summary["per_journal"]), 3)
+        for pj in summary["per_journal"]:
+            self.assertIn("abstract_coverage", pj)
+        self.assertEqual(summary["total_dropped_stale"], 0)  # fixture 皆為近期
 
     def test_idempotent_second_run_adds_nothing(self):
         run_fetch_and_score(self.config, self.transport, issns=FIXTURE_ISSNS, today=FIXED_TODAY)
@@ -67,6 +78,23 @@ class TestPipeline(unittest.TestCase):
         )
         self.assertGreater(summary["new_this_run"], 0)
         self.assertFalse(Path(self.config.papers_json_path).exists())
+
+
+class TestDropStale(unittest.TestCase):
+    def test_drops_papers_older_than_cutoff(self):
+        cutoff = date(2024, 7, 2)  # 730 天前（相對 2026-07-02）
+        recent = Paper(dedup_key="a", doi="10.1/a", title="recent", published_date="2026-06-01")
+        old = Paper(dedup_key="b", doi="10.1/b", title="old", published_date="2020-01-01")
+        no_date = Paper(dedup_key="c", doi="10.1/c", title="nodate", published_date=None)
+        kept, dropped = _drop_stale([recent, old, no_date], cutoff)
+        self.assertEqual(dropped, 1)
+        self.assertEqual({p.dedup_key for p in kept}, {"a", "c"})  # 無日期者保留
+
+    def test_none_cutoff_keeps_all(self):
+        old = Paper(dedup_key="b", doi="10.1/b", title="old", published_date="2000-01-01")
+        kept, dropped = _drop_stale([old], None)
+        self.assertEqual(dropped, 0)
+        self.assertEqual(len(kept), 1)
 
 
 class TestStoreFuzzyDedup(unittest.TestCase):

@@ -34,11 +34,31 @@ python fetch_and_score.py --issn 1094-6705 --issn 0022-2429 --issn 0148-2963 --f
 
 輸出 `data/papers.json` 結構：`{ "summary": {...}, "papers": [ {score, title, journal, doi, authors, abstract, url, matched_keywords, ...} ] }`，`papers` 已依 `score` 由高到低排序。
 
-## 測試（離線）
+## 測試與驗收
+
+### 離線單元/端到端測試（合成資料，非驗收）
 
 ```bash
 python3 -m unittest discover -s tests
 ```
+
+> ⚠️ 這些用的是 `tests/fixtures/` 的**合成 Crossref 資料**，只驗證程式邏輯（去重/評分/流程），
+> **不等於**「對真實期刊跑通」的驗收。任何以 fixture 產生的排名/分數僅為功能示意，非驗收證據。
+
+### Live 驗收（真實 Crossref，需可連外環境）
+
+```bash
+./smoke_test.sh                       # 預設 JSR / JM / JBR（含一本 Elsevier）
+./smoke_test.sh 1094-6705 0022-2429   # 自訂 ISSN
+MIN_PER_JOURNAL=1 ./smoke_test.sh      # 調整每期刊最低筆數門檻
+```
+
+**通過標準（PASS）**：
+1. `fetch_and_score.py` 正常結束（exit 0），無未處理例外。
+2. 每本期刊回傳 ≥ `MIN_PER_JOURNAL`（預設 1）。季刊（如 MISQ）30 天內可能為 0，屬正常，測這類期刊請設 `MIN_PER_JOURNAL=0`。
+3. 去重有作用且入庫：`total_fetched ≥ new_this_run` 且首次跑 `new_this_run > 0`；重跑同參數 `new_this_run == 0`（冪等）。
+
+腳本另會**報告各期刊摘要覆蓋率**（只報告、不硬性失敗，見下方評估）。
 
 13 個測試涵蓋：DOI/標題正規化、去重（含同批 & DB 內模糊比對）、詞邊界評分、JATS 摘要清洗、
 work→Paper 正規化，以及三本期刊的端到端流程（含冪等性、dry-run）。全程用 `FixtureTransport`，不需網路。
@@ -50,6 +70,7 @@ scholar-radar/
 ├── config.yaml            # 集中設定：期刊清單、抓取視窗、filter 欄位、API email
 ├── interest_model.json    # 評分權重（純資料檔，Phase 4 由 train_interest.py 微調）
 ├── fetch_and_score.py     # Phase 1 CLI 進入點
+├── smoke_test.sh          # live Crossref 驗收（需可連外）+ 覆蓋率報告
 ├── requirements.txt
 ├── scholar_radar/         # 核心套件
 │   ├── config.py          # 讀 config.yaml（相對路徑以 config 所在目錄解析）
@@ -75,6 +96,14 @@ scholar-radar/
   三者取捨已寫在 `config.yaml` 註解，方便你切換。
 - 只保留 `journal-article`（過濾書評/勘誤/editorial），清單在 `crossref.allowed_types`。
 
+### 防噪音規則
+- `crossref.max_published_age_days`（預設 730 天）：**published date** 早於「今天 − 此天數」的項目直接丟棄。
+  避免出版社批次更新舊文 metadata 導致 index-date 變新、灌爆雷達。無 published date 者保留。設 0 可關閉。
+
+### papers.json 每筆欄位（新增）
+- `has_abstract`：布林值，Crossref 是否附摘要（Elsevier 期刊常為 `false`，供覆蓋率追蹤與 Phase 2.5 判斷）。
+- `first_seen`：首次入庫 UTC 時間戳，**Phase 3 推播去重**依賴此欄位（現在加，免日後 migrate）。
+
 ### 去重策略（兩層）
 1. **主鍵 `dedup_key`**：正規化 DOI（去 `doi.org/` 前綴、轉小寫）；無 DOI 時退回**正規化標題 hash**。
 2. **輔助模糊比對**：同期刊範圍內，用 `difflib` 標題相似度 ≥ 門檻（預設 0.92）視為同一篇，
@@ -89,20 +118,35 @@ scholar-radar/
 - HTTP 抽象成 `Transport` 介面。真實抓取 `HttpTransport`（指數退避、尊重 `Retry-After`/429/5xx），
   測試/驗收用 `FixtureTransport` 把 ISSN 對應到本地 fixture。解析邏輯對真實形狀的 fixture 測試，不碰網路。
 
-## 給維護者的待確認事項（Phase 2 前）
+## 已裁決事項（維護者，2026-07）
 
-實作時我依規格做了以下預設，若與你想法不同請提出，Phase 2 會一併調整：
+1. **filter 欄位** = `from-index-date`（核准）。**另加防噪音規則**：published date 早於 730 天（`config` 可調）者丟棄。
+2. **clamp** 只約束 Phase 4 權重微調，總分不設限（核准）。前端若需正規化自行處理，評分核心保持原始加總。
+3. **papers.json** 輸出整庫視窗（核准）。每筆加 `first_seen`（Phase 3 推播去重用）。
+4. **30 天視窗 + 每日兩次**（核准），冪等靠去重。
 
-1. **filter 欄位**：預設 `from-index-date`。若你更在意「正式出版日」的一致性，可改 `from-online-pub-date`。
-2. **抓取視窗**：預設 30 天。每日跑兩次時 30 天視窗有大量重疊，但靠去重保證冪等，不會重複推播。
-3. **評分是否 clamp**：目前 `score` 為權重原始加總（不設上下限），命中越多分越高。
-   規格中的 `clamp` 是針對 Phase 4 **權重**微調（`effective = clamp(base+delta, min, max)`），非針對總分——已如此區分。
-4. **papers.json 範圍**：目前輸出「視窗內發表日期」的整庫論文（含歷史抓取），非僅本次新增，方便前端一次呈現。
+## 摘要覆蓋率評估（Elsevier 風險）
+
+**現況**：Crossref 的摘要覆蓋率因出版社而異。經驗上：
+- **Elsevier**（JBR `0148-2963`、Tourism Management `0261-5177`、IJHM `0278-4319`）— 通常**不**向 Crossref 提供摘要，預期覆蓋率接近 **0%**。
+- **SAGE / INFORMS / Wiley**（JM、JAMS、JSR、ISR、JRI）— 覆蓋率通常較高。
+
+**對評分的影響**：無摘要時，僅「標題」能命中關鍵字。標題命中本就有 `title_multiplier` 加成，
+故**排序仍可用**，但摘要專屬關鍵字（如只出現在摘要的 `structural equation modeling`）的召回會下降。
+
+**我的建議**：跑 `smoke_test.sh` 看實際覆蓋率——
+- 若三本 Elsevier 都 ~0%（極可能），且你重視這些期刊 → **把 Phase 3 的補摘要提前到 Phase 2.5**。
+- 補摘要來源我**建議優先用 OpenAlex** 而非 Semantic Scholar：OpenAlex 無需 API key、
+  對 Elsevier 覆蓋較好（以 inverted-index 提供摘要，可還原），且與現有 `Transport` 介面容易接。
+  Semantic Scholar 留給 Phase 3 的「作者追蹤」。
+
+決策權在你：跑完 smoke test 後告訴我是否要插入 Phase 2.5，我再據此排 Phase 2 的展示層是否預留 `abstract_source` 欄位。
 
 ## Roadmap
 
 - [x] **Phase 1**：Crossref 抓取 + SQLite 去重 + 評分 + papers.json
 - [ ] **Phase 2**：`enrich.py`（Unpaywall OA 標註）+ 靜態網頁展示層（localStorage 動作，預留跨裝置抽象）
+- [ ] **Phase 2.5（條件性）**：若 Elsevier 摘要覆蓋率過低 → OpenAlex 補摘要
 - [ ] **Phase 3**：`notify_digest.py`（ntfy 推播）+ Semantic Scholar 作者追蹤/補摘要
 - [ ] **Phase 4**：`train_interest.py`（投票回饋微調權重，預設 dry-run）+ `export_actions.py`（JSON/CSV 下游）
 - [ ] **Phase 5（選用）**：Cloudflare Workers + D1 跨裝置同步
