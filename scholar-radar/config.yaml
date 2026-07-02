@@ -1,0 +1,66 @@
+# ============================================================================
+# scholar-radar 設定檔（集中管理）
+# 只需要改這個檔案即可調整期刊清單、抓取視窗、API 設定。
+# ============================================================================
+
+# Crossref polite pool 需要一個聯絡信箱（放進 mailto 參數 / User-Agent）。
+# 換成你自己的信箱；沒有信箱也能跑，但會被歸到較慢的 public pool。
+contact_email: "panpanhuang332@gmail.com"
+
+crossref:
+  # 抓取視窗：往回幾天。Phase 1 驗收用 30 天。
+  window_days: 30
+  # 用哪個日期欄位當「新文」判準。可選：
+  #   from-index-date       Crossref 索引到的日期（最能抓到「最近才出現」的文章，預設）
+  #   from-created-date     DOI 記錄首次建立日期（較穩定，但可能漏掉補登的舊文）
+  #   from-online-pub-date  線上出版日
+  #   from-pub-date         正式出版日（常有延遲，最不適合當雷達）
+  filter_field: "from-index-date"
+  # 只保留這些 Crossref type（過濾掉勘誤、書評、editorial…可自行增減）
+  allowed_types:
+    - "journal-article"
+  # 每次請求抓幾筆（Crossref 上限 1000；搭配 cursor 分頁）
+  rows_per_page: 100
+  # 指數退避設定
+  max_retries: 5
+  backoff_base_seconds: 2.0
+  request_timeout_seconds: 30
+
+# 目標期刊（依 ISSN 抓取，可自由增減）
+journals:
+  - issn: "0022-2429"
+    name: "Journal of Marketing"
+  - issn: "0092-0703"
+    name: "Journal of the Academy of Marketing Science"
+  - issn: "1094-6705"
+    name: "Journal of Service Research"
+  - issn: "0887-6045"
+    name: "Journal of Services Marketing"
+  - issn: "0148-2963"
+    name: "Journal of Business Research"
+  - issn: "0022-4359"
+    name: "Journal of Retailing"
+  - issn: "0278-4319"
+    name: "International Journal of Hospitality Management"
+  - issn: "0149-0400"
+    name: "Leisure Sciences"
+  - issn: "0022-2216"
+    name: "Journal of Leisure Research"
+  - issn: "0261-5177"
+    name: "Tourism Management"
+  - issn: "0022-4367"
+    name: "Journal of Risk and Insurance"
+  - issn: "1047-7047"
+    name: "Information Systems Research"
+  - issn: "0276-7783"
+    name: "MIS Quarterly"
+
+# 評分模型檔路徑（相對於此 config）
+interest_model_path: "interest_model.json"
+
+# 資料輸出
+storage:
+  sqlite_path: "data/scholar_radar.db"
+  papers_json_path: "data/papers.json"
+  # 標題模糊比對門檻（difflib ratio，0~1）。>= 此值視為同一篇（去重輔助）。
+  title_dedup_threshold: 0.92

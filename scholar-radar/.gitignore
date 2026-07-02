@@ -1,0 +1,10 @@
+# 執行期產物（不進版控）
+data/*.db
+data/papers.json
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+# 保留 data 目錄本身
+!data/.gitkeep
