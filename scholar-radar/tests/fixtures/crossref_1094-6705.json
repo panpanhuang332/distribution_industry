@@ -1,0 +1,59 @@
+{
+  "status": "ok",
+  "message-type": "work-list",
+  "message-version": "1.0.0",
+  "message": {
+    "total-results": 3,
+    "items-per-page": 100,
+    "query": {"start-index": 0, "search-terms": null},
+    "items": [
+      {
+        "DOI": "10.1177/10946705261000001",
+        "type": "journal-article",
+        "title": ["Closing the Gap: A SERVQUAL Reassessment of Service Quality in Digital Channels"],
+        "container-title": ["Journal of Service Research"],
+        "ISSN": ["1094-6705"],
+        "author": [
+          {"given": "Kuo-Chin", "family": "Huang", "sequence": "first"},
+          {"given": "Amy", "family": "Chen", "sequence": "additional"}
+        ],
+        "created": {"date-parts": [[2026, 6, 18]]},
+        "indexed": {"date-parts": [[2026, 6, 19]]},
+        "published-online": {"date-parts": [[2026, 6, 15]]},
+        "issued": {"date-parts": [[2026, 6]]},
+        "abstract": "<jats:p>Building on the <jats:italic>gap model</jats:italic> and SERVQUAL, this study revisits service quality and customer expectations in digital service encounters. We develop and validate a new scale.</jats:p>",
+        "URL": "https://doi.org/10.1177/10946705261000001",
+        "subject": ["Marketing", "Organizational Behavior and Human Resource Management"]
+      },
+      {
+        "DOI": "10.1177/10946705261000002",
+        "type": "journal-article",
+        "title": ["Expectation Honesty and Managing Customer Expectations in Frontline Service"],
+        "container-title": ["Journal of Service Research"],
+        "ISSN": ["1094-6705"],
+        "author": [{"given": "Maria", "family": "Lopez", "sequence": "first"}],
+        "created": {"date-parts": [[2026, 6, 10]]},
+        "indexed": {"date-parts": [[2026, 6, 12]]},
+        "published-online": {"date-parts": [[2026, 6, 8]]},
+        "issued": {"date-parts": [[2026, 6]]},
+        "abstract": "<jats:p>We examine how expectation management shapes trust and satisfaction.</jats:p>",
+        "URL": "https://doi.org/10.1177/10946705261000002",
+        "subject": ["Marketing"]
+      },
+      {
+        "DOI": "10.1177/10946705261000003",
+        "type": "book-review",
+        "title": ["Book Review: The Service Economy"],
+        "container-title": ["Journal of Service Research"],
+        "ISSN": ["1094-6705"],
+        "author": [{"given": "John", "family": "Reviewer", "sequence": "first"}],
+        "created": {"date-parts": [[2026, 6, 5]]},
+        "indexed": {"date-parts": [[2026, 6, 6]]},
+        "issued": {"date-parts": [[2026, 6]]},
+        "abstract": "",
+        "URL": "https://doi.org/10.1177/10946705261000003",
+        "subject": ["Marketing"]
+      }
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "status": "ok",
+  "message-type": "work-list",
+  "message-version": "1.0.0",
+  "message": {
+    "total-results": 2,
+    "items-per-page": 100,
+    "query": {"start-index": 0, "search-terms": null},
+    "items": [
+      {
+        "DOI": "10.1177/00222429261000010",
+        "type": "journal-article",
+        "title": ["Detecting Fake Online Reviews: Information Pollution and Consumer Trust in E-Commerce"],
+        "container-title": ["Journal of Marketing"],
+        "ISSN": ["0022-2429"],
+        "author": [
+          {"given": "Wei", "family": "Zhang", "sequence": "first"},
+          {"given": "Sara", "family": "Kim", "sequence": "additional"}
+        ],
+        "created": {"date-parts": [[2026, 6, 20]]},
+        "indexed": {"date-parts": [[2026, 6, 21]]},
+        "published-online": {"date-parts": [[2026, 6, 17]]},
+        "issued": {"date-parts": [[2026, 6]]},
+        "abstract": "<jats:p>Fake reviews are a growing form of information pollution. Using structural equation modeling on survey data, we show how fake online reviews erode consumer trust.</jats:p>",
+        "URL": "https://doi.org/10.1177/00222429261000010",
+        "subject": ["Business and International Management", "Marketing"]
+      },
+      {
+        "DOI": "10.1177/00222429261000011",
+        "type": "journal-article",
+        "title": ["Dynamic Pricing Under Supply Chain Optimization Constraints"],
+        "container-title": ["Journal of Marketing"],
+        "ISSN": ["0022-2429"],
+        "author": [{"given": "Raj", "family": "Patel", "sequence": "first"}],
+        "created": {"date-parts": [[2026, 6, 9]]},
+        "indexed": {"date-parts": [[2026, 6, 11]]},
+        "published-online": {"date-parts": [[2026, 6, 7]]},
+        "issued": {"date-parts": [[2026, 6]]},
+        "abstract": "<jats:p>We formulate an inventory optimization and vehicle routing model for last-mile delivery.</jats:p>",
+        "URL": "https://doi.org/10.1177/00222429261000011",
+        "subject": ["Marketing"]
+      }
+    ]
+  }
+}

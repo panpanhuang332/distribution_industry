@@ -1,0 +1,60 @@
+{
+  "status": "ok",
+  "message-type": "work-list",
+  "message-version": "1.0.0",
+  "message": {
+    "total-results": 3,
+    "items-per-page": 100,
+    "query": {"start-index": 0, "search-terms": null},
+    "items": [
+      {
+        "DOI": "10.1016/j.jbusres.2026.100001",
+        "type": "journal-article",
+        "title": ["Scale Development and Construct Validity for Leisure Deprivation Among Caregivers"],
+        "container-title": ["Journal of Business Research"],
+        "ISSN": ["0148-2963"],
+        "author": [
+          {"given": "Ping-Han", "family": "Huang", "sequence": "first"},
+          {"given": "Laura", "family": "Green", "sequence": "additional"}
+        ],
+        "created": {"date-parts": [[2026, 6, 22]]},
+        "indexed": {"date-parts": [[2026, 6, 23]]},
+        "published-online": {"date-parts": [[2026, 6, 19]]},
+        "issued": {"date-parts": [[2026, 6]]},
+        "abstract": "<jats:p>We report scale development and construct validity evidence for a leisure deprivation measure among informal caregivers, addressing leisure constraints.</jats:p>",
+        "URL": "https://doi.org/10.1016/j.jbusres.2026.100001",
+        "subject": ["Marketing"]
+      },
+      {
+        "DOI": "https://doi.org/10.1016/J.JBUSRES.2026.100001",
+        "type": "journal-article",
+        "title": ["Scale development and construct validity for leisure deprivation among caregivers"],
+        "container-title": ["Journal of Business Research"],
+        "ISSN": ["0148-2963"],
+        "author": [{"given": "Ping-Han", "family": "Huang", "sequence": "first"}],
+        "created": {"date-parts": [[2026, 6, 22]]},
+        "indexed": {"date-parts": [[2026, 6, 24]]},
+        "published-online": {"date-parts": [[2026, 6, 19]]},
+        "issued": {"date-parts": [[2026, 6]]},
+        "abstract": "<jats:p>Duplicate record with an upper-cased DOI to exercise DOI normalization dedup.</jats:p>",
+        "URL": "https://doi.org/10.1016/j.jbusres.2026.100001",
+        "subject": ["Marketing"]
+      },
+      {
+        "DOI": "10.1016/j.jbusres.2026.100002",
+        "type": "journal-article",
+        "title": ["A Machine Learning Approach to Corporate Credit Risk Scoring"],
+        "container-title": ["Journal of Business Research"],
+        "ISSN": ["0148-2963"],
+        "author": [{"given": "Tomasz", "family": "Nowak", "sequence": "first"}],
+        "created": {"date-parts": [[2026, 6, 3]]},
+        "indexed": {"date-parts": [[2026, 6, 4]]},
+        "published-online": {"date-parts": [[2026, 6, 2]]},
+        "issued": {"date-parts": [[2026, 6]]},
+        "abstract": "<jats:p>A purely quantitative financial engineering model unrelated to services research.</jats:p>",
+        "URL": "https://doi.org/10.1016/j.jbusres.2026.100002",
+        "subject": ["Finance"]
+      }
+    ]
+  }
+}
